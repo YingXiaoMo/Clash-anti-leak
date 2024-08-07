@@ -9,21 +9,21 @@
 - DST-PORT,61458
 
 
-- DOMAIN-SUFFIX,+.steamcontent.com,DIRECT
-- DOMAIN-SUFFIX,+.steamstatic.com,DIRECT
-- DOMAIN-SUFFIX,+.steamserver.net,DIRECT
-- DOMAIN-SUFFIX,+.steampowered.com,DIRECT
-- DOMAIN-SUFFIX,+.rmbgame.net,DIRECT
-- DOMAIN-KEYWORD,+.EpicWebHelper.exe,DIRECT
-- DOMAIN-SUFFIX,+.alist.nn.ci,DIRECT
-- DOMAIN-SUFFIX,+.alipan.com,DIRECT
-- DOMAIN-SUFFIX,+.xhofe.top,DIRECT
-- DOMAIN-SUFFIX,+.greasyfork.org,DIRECT
-- DOMAIN-SUFFIX,+.istoreos.com,DIRECT
-- DOMAIN-SUFFIX,+.netease.com,DIRECT
-- DOMAIN-SUFFIX,+.linkease.com,DIRECT
-- DOMAIN-SUFFIX,+.koolcenter.com,DIRECT
-- DOMAIN-SUFFIX,+.diemoe.net,DIRECT
+- DOMAIN-SUFFIX,+.steamcontent.com
+- DOMAIN-SUFFIX,+.steamstatic.com
+- DOMAIN-SUFFIX,+.steamserver.net
+- DOMAIN-SUFFIX,+.steampowered.com
+- DOMAIN-SUFFIX,+.rmbgame.net
+- DOMAIN-KEYWORD,+.EpicWebHelper.exe
+- DOMAIN-SUFFIX,+.alist.nn.ci
+- DOMAIN-SUFFIX,+.alipan.com
+- DOMAIN-SUFFIX,+.xhofe.top
+- DOMAIN-SUFFIX,+.greasyfork.org
+- DOMAIN-SUFFIX,+.istoreos.com
+- DOMAIN-SUFFIX,+.netease.com
+- DOMAIN-SUFFIX,+.linkease.com
+- DOMAIN-SUFFIX,+.koolcenter.com
+- DOMAIN-SUFFIX,+.diemoe.net
 
 
 
