@@ -8,21 +8,23 @@
 - DST-PORT,61457
 - DST-PORT,61458
 
-- '+.steamcontent.com'
-- '+.steamstatic.com'
-- '+.steamserver.net'
-- '+.steampowered.com'
-- '+.rmbgame.net'
-- '+.EpicWebHelper.exe'
-- '+.alist.nn.ci'
-- '+.alipan.com'
-- '+.xhofe.top'
-- '+.greasyfork.org'
-- '+.istoreos.com'
-- '+.netease.com'
-- '+.linkease.com'
-- '+.koolcenter.com'
-- '+.diemoe.net'
+
+- DOMAIN-SUFFIX,+.steamcontent.com,DIRECT
+- DOMAIN-SUFFIX,+.steamstatic.com,DIRECT
+- DOMAIN-SUFFIX,+.steamserver.net,DIRECT
+- DOMAIN-SUFFIX,+.steampowered.com,DIRECT
+- DOMAIN-SUFFIX,+.rmbgame.net,DIRECT
+- DOMAIN-KEYWORD,+.EpicWebHelper.exe,DIRECT
+- DOMAIN-SUFFIX,+.alist.nn.ci,DIRECT
+- DOMAIN-SUFFIX,+.alipan.com,DIRECT
+- DOMAIN-SUFFIX,+.xhofe.top,DIRECT
+- DOMAIN-SUFFIX,+.greasyfork.org,DIRECT
+- DOMAIN-SUFFIX,+.istoreos.com,DIRECT
+- DOMAIN-SUFFIX,+.netease.com,DIRECT
+- DOMAIN-SUFFIX,+.linkease.com,DIRECT
+- DOMAIN-SUFFIX,+.koolcenter.com,DIRECT
+- DOMAIN-SUFFIX,+.diemoe.net,DIRECT
+
 
 
 
