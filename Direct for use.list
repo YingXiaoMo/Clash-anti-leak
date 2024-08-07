@@ -1,7 +1,4 @@
-##- DOMAIN-SUFFIX,google.com,Proxy #匹配域名后缀(交由Proxy代理服务器组)
-##- DOMAIN-KEYWORD,google,Proxy #匹配域名关键字(交由Proxy代理服务器组)
-##- DOMAIN,google.com,Proxy #匹配域名(交由Proxy代理服务器组)
-
+#自用的直连规则
 
 - SRC-IP-CIDR,192.168.0.20/32
 - SRC-PORT,6672
@@ -11,32 +8,22 @@
 - DST-PORT,61457
 - DST-PORT,61458
 
-##- DOMAIN-SUFFIX,google.com,Proxy #匹配域名后缀(交由Proxy代理服务器组)
+- '+.steamcontent.com'
+- '+.steamstatic.com'
+- '+.steamserver.net'
+- '+.steampowered.com'
+- '+.rmbgame.net'
+- '+.EpicWebHelper.exe'
+- '+.alist.nn.ci'
+- '+.alipan.com'
+- '+.xhofe.top'
+- '+.greasyfork.org'
+- '+.istoreos.com'
+- '+.netease.com'
+- '+.linkease.com'
+- '+.koolcenter.com'
+- '+.diemoe.net'
 
-- DOMAIN-SUFFIX,steamserver.net
-- DOMAIN-SUFFIX,cc.ci
-- DOMAIN-SUFFIX,xhofe.top
-- DOMAIN-SUFFIX,istoreos.com
-- DOMAIN-SUFFIX,netease.com
-- DOMAIN-SUFFIX,linkease.com
-- DOMAIN-SUFFIX,koolcenter.com
-- DOMAIN-SUFFIX,diemoe.net
 
-##- DOMAIN,google.com,Proxy #匹配域名(交由Proxy代理服务器组)
 
-- DOMAIN,steamcontent.com
-- DOMAIN,steamstatic.com
-- DOMAIN,steamserver.net
-- DOMAIN,test.steampowered.com
-- DOMAIN,api.steampowered.com
-- DOMAIN,rmbgame.net
-- DOMAIN,EpicWebHelper.exe
-- DOMAIN,alist.nn.ci
-- DOMAIN,alipan.com
-- DOMAIN,api.xhofe.top
-- DOMAIN,greasyfork.org
-- DOMAIN,istoreos.com
-- DOMAIN,linkease.com
-- DOMAIN,diemoe.net
-- DOMAIN,koolcenter.com
 
