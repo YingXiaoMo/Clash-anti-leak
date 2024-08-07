@@ -14,7 +14,7 @@ DOMAIN-SUFFIX,+.steamstatic.com
 DOMAIN-SUFFIX,+.steamserver.net
 DOMAIN-SUFFIX,+.steampowered.com
 DOMAIN-SUFFIX,+.rmbgame.net
-DOMAIN-KEYWORD,+.EpicWebHelper.exe
+DOMAIN-SUFFIX,+.EpicWebHelper.exe
 DOMAIN-SUFFIX,+.alist.nn.ci
 DOMAIN-SUFFIX,+.alipan.com
 DOMAIN-SUFFIX,+.xhofe.top
