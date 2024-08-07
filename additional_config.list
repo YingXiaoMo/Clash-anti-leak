@@ -1,0 +1,4 @@
+# 无下载地址的配置
+  - DOMAIN-SUFFIX,some-domain1.com
+  - DOMAIN-SUFFIX,some-domain2.com
+  - DOMAIN-SUFFIX,some-domain3.com
