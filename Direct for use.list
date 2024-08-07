@@ -1,29 +1,29 @@
 #自用的直连规则
 
-- SRC-IP-CIDR,192.168.0.20/32
-- SRC-PORT,6672
-- DST-PORT,6672
-- DST-PORT,61455
-- DST-PORT,61456
-- DST-PORT,61457
-- DST-PORT,61458
+SRC-IP-CIDR,192.168.0.20/32
+SRC-PORT,6672
+DST-PORT,6672
+DST-PORT,61455
+DST-PORT,61456
+DST-PORT,61457
+DST-PORT,61458
 
 
-- DOMAIN-SUFFIX,+.steamcontent.com
-- DOMAIN-SUFFIX,+.steamstatic.com
-- DOMAIN-SUFFIX,+.steamserver.net
-- DOMAIN-SUFFIX,+.steampowered.com
-- DOMAIN-SUFFIX,+.rmbgame.net
-- DOMAIN-KEYWORD,+.EpicWebHelper.exe
-- DOMAIN-SUFFIX,+.alist.nn.ci
-- DOMAIN-SUFFIX,+.alipan.com
-- DOMAIN-SUFFIX,+.xhofe.top
-- DOMAIN-SUFFIX,+.greasyfork.org
-- DOMAIN-SUFFIX,+.istoreos.com
-- DOMAIN-SUFFIX,+.netease.com
-- DOMAIN-SUFFIX,+.linkease.com
-- DOMAIN-SUFFIX,+.koolcenter.com
-- DOMAIN-SUFFIX,+.diemoe.net
+DOMAIN-SUFFIX,+.steamcontent.com
+DOMAIN-SUFFIX,+.steamstatic.com
+DOMAIN-SUFFIX,+.steamserver.net
+DOMAIN-SUFFIX,+.steampowered.com
+DOMAIN-SUFFIX,+.rmbgame.net
+DOMAIN-KEYWORD,+.EpicWebHelper.exe
+DOMAIN-SUFFIX,+.alist.nn.ci
+DOMAIN-SUFFIX,+.alipan.com
+DOMAIN-SUFFIX,+.xhofe.top
+DOMAIN-SUFFIX,+.greasyfork.org
+DOMAIN-SUFFIX,+.istoreos.com
+DOMAIN-SUFFIX,+.netease.com
+DOMAIN-SUFFIX,+.linkease.com
+DOMAIN-SUFFIX,+.koolcenter.com
+DOMAIN-SUFFIX,+.diemoe.net
 
 
 
