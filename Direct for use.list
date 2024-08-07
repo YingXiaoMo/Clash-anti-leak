@@ -9,23 +9,17 @@ DST-PORT,61457
 DST-PORT,61458
 
 
-DOMAIN-SUFFIX,steamcontent.com
-DOMAIN-SUFFIX,steamstatic.com
-DOMAIN-SUFFIX,steamserver.net
-DOMAIN-SUFFIX,test.steampowered.com
-DOMAIN-SUFFIX,api.steampowered.com
-DOMAIN-SUFFIX,rmbgame.net
+DOMAIN,steamcontent.com
+DOMAIN,steamstatic.com
+DOMAIN,steamserver.net
+DOMAIN,test.steampowered.com
+DOMAIN,api.steampowered.com
+DOMAIN,rmbgame.net
 PROCESS-NAME,EpicWebHelper.exe
 
-DOMAIN-SUFFIX,steamcontent.com
-DOMAIN-SUFFIX,steamstatic.com
-DOMAIN-SUFFIX,steamserver.net
-DOMAIN-SUFFIX,+.steamserver.net
-DOMAIN-SUFFIX,test.steampowered.com
-DOMAIN-SUFFIX,api.steampowered.com
-DOMAIN-SUFFIX,rmbgame.net
-DOMAIN-SUFFIX,EpicWebHelper.exe
-DOMAIN-SUFFIX,alist.nn.ci
+
+
+DOMAIN,alist.nn.ci
 DOMAIN-SUFFIX,+.nn.ci
 DOMAIN-SUFFIX,+.alist.nn.ci
 DOMAIN-SUFFIX,alipan.com
