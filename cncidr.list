@@ -1,3 +1,4 @@
+#IP地址范围列表
 IP-CIDR,payload:,no-resolve
 IP-CIDR,- '1.0.1.0/24',no-resolve
 IP-CIDR,- '1.0.2.0/23',no-resolve
