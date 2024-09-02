@@ -1,11 +1,14 @@
 # 内容：游戏平台
 
 #Steam
+DOMAIN-SUFFIX,steamcontent.com
 DOMAIN-SUFFIX,steamstatic.com
 DOMAIN-SUFFIX,steamcdn.com
 DOMAIN-SUFFIX,steampowered.com
 DOMAIN-SUFFIX,steamserver.net
-
+DOMAIN-SUFFIX,rmbgame.net
+DOMAIN-SUFFIX,api.steampowered.com
+DOMAIN-SUFFIX,test.steampowered.com
 
 #Epic
 DOMAIN-SUFFIX,epicgames.com
