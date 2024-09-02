@@ -4,6 +4,9 @@
 DOMAIN-SUFFIX,steamstatic.com
 DOMAIN-SUFFIX,steamcdn.com
 DOMAIN-SUFFIX,steampowered.com
+DOMAIN-SUFFIX,steamserver.net
+
+
 #Epic
 DOMAIN-SUFFIX,epicgames.com
 DOMAIN-SUFFIX,epicgames.dev
