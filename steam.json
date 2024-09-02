@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": []
+    },
+    {
+      "domain_suffix": [
+        "steamcontent.com",
+        "steamstatic.com",
+        "steamcdn.com",
+        "steampowered.com",
+        "steamserver.net",
+        "rmbgame.net",
+        "api.steampowered.com",
+        "test.steampowered.com",
+        "epicgames.com",
+        "epicgames.dev",
+        "helpshift.com",
+        "paragon.com",
+        "unrealengine.com",
+        "playstation.com",
+        "playstation.net",
+        "playstationnetwork.com",
+        "sony.com",
+        "sonyentertainmentnetwork.com"
+      ]
+    },
+    {
+      "domain_keyword": []
+    },
+    {
+      "ip_cidr": []
+    }
+  ]
+}
