@@ -1,5 +1,4 @@
 DOMAIN-SUFFIX,123yx.com
-DOMAIN-SUFFIX,192.168.0.20/32
 DOMAIN-SUFFIX,7moor-fs1.com
 DOMAIN-SUFFIX,alipan.com
 DOMAIN-SUFFIX,alist.nn.ci
@@ -27,6 +26,7 @@ DOMAIN-SUFFIX,lanosso.com
 DOMAIN-SUFFIX,legado.cc
 DOMAIN-SUFFIX,likesrt.com
 DOMAIN-SUFFIX,linkease.com
+DOMAIN-SUFFIX,login.u.sdo.com
 DOMAIN-SUFFIX,lsposed.org
 DOMAIN-SUFFIX,lz.legado.cc
 DOMAIN-SUFFIX,mgz6.cc
@@ -37,8 +37,10 @@ DOMAIN-SUFFIX,moeyy.xyz
 DOMAIN-SUFFIX,netease.com
 DOMAIN-SUFFIX,nn.ci
 DOMAIN-SUFFIX,policy.flyme.com
+DOMAIN-SUFFIX,sdo.com
 DOMAIN-SUFFIX,tongjiniao.com
 DOMAIN-SUFFIX,turingpic.com
+DOMAIN-SUFFIX,u.sdo.com
 DOMAIN-SUFFIX,vip.123yx.com
 DOMAIN-SUFFIX,vip.cjjd17.com
 DOMAIN-SUFFIX,xhofe.top
