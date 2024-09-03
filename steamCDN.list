@@ -12,23 +12,16 @@ DOMAIN,steamstatic.com
 DOMAIN,steamusercontent.com
 DOMAIN,underlords.com
 DOMAIN,valvesoftware.com
-DOMAIN,# edgecast
 DOMAIN,edge.steam-dns.top.comcast.net
-DOMAIN,# 网宿(国际)
 DOMAIN,steam.apac.qtlglb.com
 DOMAIN,steam.eca.qtlglb.com
 DOMAIN,steam.naeu.qtlglb.com
 DOMAIN,steam.ru.qtlglb.com
-DOMAIN,# HIGHWINDS
 DOMAIN,full:f3b7q2p3.ssl.hwcdn.net
-DOMAIN,# internode
 DOMAIN,steam.cdn.on.net
-DOMAIN,# orcon
 DOMAIN,steam.cdn.orcon.net.nz
 DOMAIN,steam.cdn.slingshot.co.nz
-DOMAIN,# webra
 DOMAIN,steam.cdn.webra.ru
-DOMAIN,# Akamai
 DOMAIN,full:steambroadcast.akamaized.net
 DOMAIN,full:steamcdn-a.akamaihd.net
 DOMAIN,full:steamcommunity-a.akamaihd.net
@@ -40,23 +33,16 @@ DOMAIN,full:steamstore-a.akamaihd.net
 DOMAIN,full:steamusercontent-a.akamaihd.net
 DOMAIN,full:steamuserimages-a.akamaihd.net
 DOMAIN,full:steamvideo-a.akamaihd.net
-DOMAIN,# 完美
 DOMAIN,csgo.wmsj.cn @cn
 DOMAIN,dota2.wmsj.cn @cn
 DOMAIN,wmsjsteam.com @cn
-DOMAIN,# 金山云
 DOMAIN,dl.steam.clngaa.com @cn
 DOMAIN,dl.steam.ksyna.com @cn
-DOMAIN,# 白山云
 DOMAIN,st.dl.bscstorage.net @cn
 DOMAIN,st.dl.eccdnx.com @cn
 DOMAIN,st.dl.pinyuncloud.com @cn
-DOMAIN,# 华为云
 DOMAIN,steampipe.steamcontent.tnkjmec.com @cn
-DOMAIN,# 网宿
 DOMAIN,steampowered.com.8686c.com @cn
 DOMAIN,steamstatic.com.8686c.com @cn
-DOMAIN,# 阿里云
 DOMAIN,full:xz.pphimalayanrt.com @cn
-DOMAIN,# 蒸汽中国
 DOMAIN,steamchina.com @cn
