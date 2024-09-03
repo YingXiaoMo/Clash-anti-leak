@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain_suffix": []
+    },
+    {
+      "domain": [
+        "steamusercontent.com",
+        "steam.cdn.orcon.net.nz",
+        "steam.eca.qtlglb.com",
+        "steampipe-kr.akamaized.net",
+        "steampipe.steamcontent.tnkjmec.com @cn",
+        "csgo.wmsj.cn @cn",
+        "steamdeck.com",
+        "st.dl.pinyuncloud.com @cn",
+        "steam.ru.qtlglb.com",
+        "steam.apac.qtlglb.com",
+        "steamserver.net",
+        "wmsjsteam.com @cn",
+        "steamcdn-a.akamaihd.net",
+        "valvesoftware.com",
+        "underlords.com",
+        "steampipe.akamaized.net",
+        "steam-api.com",
+        "s.team",
+        "steampowered.com.8686c.com @cn",
+        "steamcommunity.com",
+        "steam.cdn.on.net",
+        "steamcontent.com",
+        "steamchina.com @cn",
+        "playartifact.com",
+        "dl.steam.ksyna.com @cn",
+        "steam.cdn.webra.ru",
+        "f3b7q2p3.ssl.hwcdn.net",
+        "steam.naeu.qtlglb.com",
+        "xz.pphimalayanrt.com @cn",
+        "steamvideo-a.akamaihd.net",
+        "steampowered.com",
+        "steamstatic.com",
+        "st.dl.eccdnx.com @cn",
+        "steampipe-partner.akamaized.net",
+        "steamgames.com",
+        "steamstatic.com.8686c.com @cn",
+        "steambroadcast.akamaized.net",
+        "st.dl.bscstorage.net @cn",
+        "steammobile.akamaized.net",
+        "steamcommunity-a.akamaihd.net",
+        "steamuserimages-a.akamaihd.net",
+        "dota2.wmsj.cn @cn",
+        "dl.steam.clngaa.com @cn",
+        "edge.steam-dns.top.comcast.net",
+        "steam-chat.com",
+        "steamusercontent-a.akamaihd.net",
+        "steam.cdn.slingshot.co.nz",
+        "steamstore-a.akamaihd.net"
+      ]
+    }
+  ]
+}
