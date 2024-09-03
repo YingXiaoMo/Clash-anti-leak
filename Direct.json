@@ -30,32 +30,18 @@
         "api.byyang.top",
         "fs-im-kefu.7moor-fs1.com",
         "ff14.huijiwiki.com"
-      ]
-    },
-    {
+      ],
       "domain_suffix": [
-        "istoreos.com",
         "moeyy.xyz",
         "yksdks.com",
-        "netease.com",
         "sdo.com",
-        "greasyfork.org",
-        "123yx.com",
         "mgz6.cc",
-        "diemoe.net",
         "byyang.top",
         "turingpic.com",
         "nn.ci",
         "cjjd17.com",
         "flyme.com",
         "xhofe.top",
-        "linkease.com",
-        "tongjiniao.com",
-        "lsposed.org",
-        "alipan.com",
-        "legado.cc",
-        "koolcenter.com",
-        "u.sdo.com",
         "dutils.com",
         "mgz6.com",
         "lanosso.com",
@@ -65,12 +51,6 @@
         "likesrt.com",
         "miaogongzi.net"
       ]
-    },
-    {
-      "domain_keyword": []
-    },
-    {
-      "ip_cidr": []
     }
   ]
 }
