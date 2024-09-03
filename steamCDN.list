@@ -1,77 +1,48 @@
-playartifact.com
-s.team
-steam-api.com
-steam-chat.com
-steamcommunity.com
-steamcontent.com
-steamdeck.com
-steamgames.com
-steampowered.com
-steamserver.net
-steamstatic.com
-steamusercontent.com
-underlords.com
-valvesoftware.com
-
-# edgecast
-edge.steam-dns.top.comcast.net
-
-# 网宿(国际)
-steam.apac.qtlglb.com
-steam.eca.qtlglb.com
-steam.naeu.qtlglb.com
-steam.ru.qtlglb.com
-
-# HIGHWINDS
-full:f3b7q2p3.ssl.hwcdn.net
-
-# internode
-steam.cdn.on.net
-
-# orcon
-steam.cdn.orcon.net.nz
-steam.cdn.slingshot.co.nz
-
-# webra
-steam.cdn.webra.ru
-
-# Akamai
-full:steambroadcast.akamaized.net
-full:steamcdn-a.akamaihd.net
-full:steamcommunity-a.akamaihd.net
-full:steammobile.akamaized.net
-full:steampipe-kr.akamaized.net
-full:steampipe-partner.akamaized.net
-full:steampipe.akamaized.net
-full:steamstore-a.akamaihd.net
-full:steamusercontent-a.akamaihd.net
-full:steamuserimages-a.akamaihd.net
-full:steamvideo-a.akamaihd.net
-
-
-# 完美
-csgo.wmsj.cn @cn
-dota2.wmsj.cn @cn
-wmsjsteam.com @cn
-
-# 金山云
-dl.steam.clngaa.com @cn
-dl.steam.ksyna.com @cn
-
-# 白山云
-st.dl.bscstorage.net @cn
-st.dl.eccdnx.com @cn
-st.dl.pinyuncloud.com @cn
-
-# 华为云
-steampipe.steamcontent.tnkjmec.com @cn
-
-# 网宿
-steampowered.com.8686c.com @cn
-steamstatic.com.8686c.com @cn
-
-# 阿里云
-full:xz.pphimalayanrt.com @cn
-
-# 蒸汽中国
-steamchina.com @cn
+DOMAIN,playartifact.com
+DOMAIN,s.team
+DOMAIN,steam-api.com
+DOMAIN,steam-chat.com
+DOMAIN,steamcommunity.com
+DOMAIN,steamcontent.com
+DOMAIN,steamdeck.com
+DOMAIN,steamgames.com
+DOMAIN,steampowered.com
+DOMAIN,steamserver.net
+DOMAIN,steamstatic.com
+DOMAIN,steamusercontent.com
+DOMAIN,underlords.com
+DOMAIN,valvesoftware.com
+DOMAIN,edge.steam-dns.top.comcast.net
+DOMAIN,steam.apac.qtlglb.com
+DOMAIN,steam.eca.qtlglb.com
+DOMAIN,steam.naeu.qtlglb.com
+DOMAIN,steam.ru.qtlglb.com
+DOMAIN,f3b7q2p3.ssl.hwcdn.net
+DOMAIN,steam.cdn.on.net
+DOMAIN,steam.cdn.orcon.net.nz
+DOMAIN,steam.cdn.slingshot.co.nz
+DOMAIN,steam.cdn.webra.ru
+DOMAIN,steambroadcast.akamaized.net
+DOMAIN,steamcdn-a.akamaihd.net
+DOMAIN,steamcommunity-a.akamaihd.net
+DOMAIN,steammobile.akamaized.net
+DOMAIN,steampipe-kr.akamaized.net
+DOMAIN,steampipe-partner.akamaized.net
+DOMAIN,steampipe.akamaized.net
+DOMAIN,steamstore-a.akamaihd.net
+DOMAIN,steamusercontent-a.akamaihd.net
+DOMAIN,steamuserimages-a.akamaihd.net
+DOMAIN,steamvideo-a.akamaihd.net
+DOMAIN,csgo.wmsj.cn @cn
+DOMAIN,dota2.wmsj.cn @cn
+DOMAIN,wmsjsteam.com @cn
+DOMAIN,dl.steam.clngaa.com @cn
+DOMAIN,dl.steam.ksyna.com @cn
+DOMAIN,st.dl.bscstorage.net @cn
+DOMAIN,st.dl.eccdnx.com @cn
+DOMAIN,st.dl.pinyuncloud.com @cn
+DOMAIN,steampipe.steamcontent.tnkjmec.com @cn
+DOMAIN,steampowered.com.8686c.com @cn
+DOMAIN,steamstatic.com.8686c.com @cn
+DOMAIN,xz.pphimalayanrt.com @cn
+DOMAIN,steamchina.com @cn
