@@ -3,27 +3,42 @@
   "rules": [
     {
       "domain_suffix": [
-        "cm.steampowered.com",
-        "steamchina.com",
         "steamcontent.com",
+        "steamstatic.com",
+        "steamcdn.com",
+        "steampowered.com",
         "steamserver.net",
-        "steamusercontent.com"
+        "rmbgame.net",
+        "api.steampowered.com",
+        "test.steampowered.com",
+        "epicgames.com",
+        "epicgames.dev",
+        "helpshift.com",
+        "paragon.com",
+        "unrealengine.com",
+        "playstation.com",
+        "playstation.net",
+        "playstationnetwork.com",
+        "sony.com",
+        "sonyentertainmentnetwork.com",
+        "steamusercontent.com",
+        "steamchina.com"
       ]
     },
     {
       "domain": [
         "csgo.wmsj.cn",
+        "dota2.wmsj.cn",
+        "wmsjsteam.com",
         "dl.steam.clngaa.com",
         "dl.steam.ksyna.com",
-        "dota2.wmsj.cn",
         "st.dl.bscstorage.net",
         "st.dl.eccdnx.com",
         "st.dl.pinyuncloud.com",
+        "xz.pphimalayanrt.com",
         "steampipe.steamcontent.tnkjmec.com",
         "steampowered.com.8686c.com",
-        "steamstatic.com.8686c.com",
-        "wmsjsteam.com",
-        "xz.pphimalayanrt.com"
+        "steamstatic.com.8686c.com"
       ]
     }
   ]
