@@ -20,7 +20,25 @@
         "playstation.net",
         "playstationnetwork.com",
         "sony.com",
-        "sonyentertainmentnetwork.com"
+        "sonyentertainmentnetwork.com",
+        "steamusercontent.com",
+        "steamchina.com"
+      ]
+    },
+    {
+      "domain": [
+        "csgo.wmsj.cn",
+        "dota2.wmsj.cn",
+        "wmsjsteam.com",
+        "dl.steam.clngaa.com",
+        "dl.steam.ksyna.com",
+        "st.dl.bscstorage.net",
+        "st.dl.eccdnx.com",
+        "st.dl.pinyuncloud.com",
+        "xz.pphimalayanrt.com",
+        "steampipe.steamcontent.tnkjmec.com",
+        "steampowered.com.8686c.com",
+        "steamstatic.com.8686c.com"
       ]
     }
   ]
