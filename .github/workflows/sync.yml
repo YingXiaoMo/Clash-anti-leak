@@ -3,6 +3,7 @@ name: Daily Sync
 on:
   schedule:
     - cron: '0 0 * * *'  # 每天午夜运行
+  workflow_dispatch:  # 添加手动触发功能
 
 jobs:
   sync:
@@ -28,3 +29,4 @@ jobs:
         git add data/steam data/SteamCN.list
         git commit -m "Daily sync update" || echo "No changes to commit"
         git push origin main
+
