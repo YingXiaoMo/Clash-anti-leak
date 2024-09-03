@@ -17,22 +17,22 @@ DOMAIN,steam.apac.qtlglb.com
 DOMAIN,steam.eca.qtlglb.com
 DOMAIN,steam.naeu.qtlglb.com
 DOMAIN,steam.ru.qtlglb.com
-DOMAIN,full:f3b7q2p3.ssl.hwcdn.net
+DOMAIN,f3b7q2p3.ssl.hwcdn.net
 DOMAIN,steam.cdn.on.net
 DOMAIN,steam.cdn.orcon.net.nz
 DOMAIN,steam.cdn.slingshot.co.nz
 DOMAIN,steam.cdn.webra.ru
-DOMAIN,full:steambroadcast.akamaized.net
-DOMAIN,full:steamcdn-a.akamaihd.net
-DOMAIN,full:steamcommunity-a.akamaihd.net
-DOMAIN,full:steammobile.akamaized.net
-DOMAIN,full:steampipe-kr.akamaized.net
-DOMAIN,full:steampipe-partner.akamaized.net
-DOMAIN,full:steampipe.akamaized.net
-DOMAIN,full:steamstore-a.akamaihd.net
-DOMAIN,full:steamusercontent-a.akamaihd.net
-DOMAIN,full:steamuserimages-a.akamaihd.net
-DOMAIN,full:steamvideo-a.akamaihd.net
+DOMAIN,steambroadcast.akamaized.net
+DOMAIN,steamcdn-a.akamaihd.net
+DOMAIN,steamcommunity-a.akamaihd.net
+DOMAIN,steammobile.akamaized.net
+DOMAIN,steampipe-kr.akamaized.net
+DOMAIN,steampipe-partner.akamaized.net
+DOMAIN,steampipe.akamaized.net
+DOMAIN,steamstore-a.akamaihd.net
+DOMAIN,steamusercontent-a.akamaihd.net
+DOMAIN,steamuserimages-a.akamaihd.net
+DOMAIN,steamvideo-a.akamaihd.net
 DOMAIN,csgo.wmsj.cn @cn
 DOMAIN,dota2.wmsj.cn @cn
 DOMAIN,wmsjsteam.com @cn
@@ -44,5 +44,5 @@ DOMAIN,st.dl.pinyuncloud.com @cn
 DOMAIN,steampipe.steamcontent.tnkjmec.com @cn
 DOMAIN,steampowered.com.8686c.com @cn
 DOMAIN,steamstatic.com.8686c.com @cn
-DOMAIN,full:xz.pphimalayanrt.com @cn
+DOMAIN,xz.pphimalayanrt.com @cn
 DOMAIN,steamchina.com @cn
