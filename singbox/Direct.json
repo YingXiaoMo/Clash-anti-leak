@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain": [
+        "yd.mgz6.com",
+        "yuedu.miaogongzi.net",
+        "modules-cloudflare.lsposed.org",
+        "policy.flyme.com",
+        "c1029.lanosso.com",
+        "ff14.huijiwiki.com",
+        "login.u.sdo.com",
+        "fs-im-kefu.7moor-fs1.com",
+        "linkease.com",
+        "vip.123yx.com",
+        "netease.com",
+        "api.xhofe.top",
+        "vip.cjjd17.com",
+        "lz.legado.cc",
+        "alipan.com",
+        "files.likesrt.com",
+        "istoreos.com",
+        "koolcenter.com",
+        "api-p1.yksdks.com",
+        "greasyfork.org",
+        "api.tongjiniao.com",
+        "github.moeyy.xyz",
+        "c-ssl.duitang.com",
+        "yd.mgz6.cc",
+        "alist.nn.ci",
+        "api.byyang.top",
+        "diemoe.net"
+      ]
+    },
+    {
+      "domain_suffix": [
+        "7moor-fs1.com",
+        "lsposed.org",
+        "123yx.com",
+        "moeyy.xyz",
+        "xhofe.top",
+        "tongjiniao.com",
+        "linkease.com",
+        "huijiwiki.com",
+        "mgz6.cc",
+        "miaogongzi.net",
+        "netease.com",
+        "dutils.com",
+        "u.sdo.com",
+        "mgz6.com",
+        "flyme.com",
+        "cjjd17.com",
+        "alipan.com",
+        "likesrt.com",
+        "lanosso.com",
+        "istoreos.com",
+        "koolcenter.com",
+        "legado.cc",
+        "greasyfork.org",
+        "duitang.com",
+        "turingpic.com",
+        "yksdks.com",
+        "byyang.top",
+        "nn.ci",
+        "sdo.com",
+        "diemoe.net"
+      ]
+    },
+    {
+      "domain_keyword": []
+    },
+    {
+      "ip_cidr": []
+    }
+  ]
+}
