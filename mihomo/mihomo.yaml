@@ -29,7 +29,7 @@ bind-address: "*"                                                  # 局域网ip
 ipv6: true                                                         # ipv6，false表示关闭
 unified-delay: true                                                # 统一延迟
 tcp-concurrent: true                                               # tcp并发
-log-level: warning                                                 # 日志等级
+log-level: info                                                    # 日志等级
 mode: rule                                                         # 运行模式
 find-process-mode: 'off'                                           # 进程匹配                #always，总是匹配             strict，自动匹配
 # interface-name: en0                         # 绑定网卡
