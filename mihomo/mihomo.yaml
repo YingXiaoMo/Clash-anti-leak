@@ -133,7 +133,7 @@ proxy-groups:
   - {name: 🇯🇵 日本节点, type: fallback, include-all: true, tolerance: 20, interval: 180, filter: "(?i)日|jp|japan" }
   - {name: 🇺🇸 美国节点, type: fallback, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)美|us|unitedstates|united states"}  
   - {name: 🤖 GPT节点, type: fallback, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)GPT|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States|UnitedStates"}
-  - {name: 🎬 emby节点, type: fallback, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)0.1|0.01|香港|港|HK|hk|Hong Kong|HongKong|hongkong|深港|新加坡|坡|狮城|SG|Singapore"} 
+  - {name: 🎬 emby节点,type: fallback,include-all: true,tolerance: 20,interval: 180,filter: "(?=.*(香港|港|HK|hongkong|深港|新加坡|坡|狮城|SG|Singapore|0.1|0.01))^((?!(日本|JP|Japan|韩国|韩|KR|Korea|South Korea|台|新北|彰化|TW|Taiwan)).)*$"}
   - {name: 🚫 其他地区, type: fallback, include-all: true, tolerance: 20, interval: 180, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
   
 
