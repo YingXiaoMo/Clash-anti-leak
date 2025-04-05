@@ -108,7 +108,7 @@ eb: &eb {type: select, proxies: [🎬 emby节点, 🎯 全球直连, 🚀 手动
 gpt: &gpt {type: select, proxies: [🤖 GPT节点, 🚀 手动切换, 🌐 轮询负载, 🔮 散列负载, 🌎 自建节点]} 
 
 proxy-groups:
-  - {name: 🚀 手动切换, type: select, include-all: true, filter: "^((?!(直连)).)*$"}
+  - {name: 🚀 手动切换, type: select, include-all: true, exclude-type: direct}
   - {name: 🌐 轮询负载, type: load-balance, strategy: round-robin, url: "https://www.gstatic.com/generate_204", interval: 180, tolerance: 30, include-all: true, filter: "^((?!(直连)).)*$"}
   - {name: 🔮 散列负载, type: load-balance, strategy: consistent-hashing, url: "https://www.gstatic.com/generate_204", interval: 180, tolerance: 30, include-all: true,filter: "^((?!(直连)).)*$"}
   - {name: 🐟 漏网之鱼, <<: *dl}  
