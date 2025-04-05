@@ -11,7 +11,7 @@ proxy-providers:
       url: https://www.gstatic.com/generate_204
       interval: 300
     proxy: 🎯 全球直连
-	
+
 # 节点信息
 proxies:
   - {name: 🎯 全球直连, type: direct}	
