@@ -1,8 +1,9 @@
 DOMAIN-KEYWORD,razer
-DOMAIN-KEYWORD,spaceship                  #域名
 DOMAIN-KEYWORD,flyme
 DOMAIN-KEYWORD,nmliao
 DOMAIN-KEYWORD,outlook
+DOMAIN-SUFFIX,spaceship-cdn.com
+DOMAIN-SUFFIX,spaceship.com
 DOMAIN-SUFFIX,mmoyo.cn
 DOMAIN-SUFFIX,mmovo.com
 DOMAIN-SUFFIX,office365.com
