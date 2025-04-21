@@ -34,7 +34,7 @@ mode: rule                                                         # 运行模�
 find-process-mode: 'off'                                           # 进程匹配                #always，总是匹配             strict，自动匹配
 # interface-name: en0                                              # 绑定网卡
 global-client-fingerprint: chrome                                  # 浏览器伪装
-keep-alive-idle: 600                                               # 不知道怎么解释，但是能给手机省电
+keep-alive-idle: 600                                               # 修改tcp链接空闲时长，不知道怎么解释，但是能给手机省电
 keep-alive-interval: 15                                            # 这个也是给手机省电的
 disable-keep-alive: false                                          # 关闭手机省电
 profile: {store-selected: true, store-fake-ip: true}               # 选择的节点和fake-ip缓存，false表示关闭
