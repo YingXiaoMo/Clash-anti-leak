@@ -4,8 +4,6 @@ DOMAIN-KEYWORD,flyme
 DOMAIN-KEYWORD,nmliao
 DOMAIN-KEYWORD,outlook
 DOMAIN,pixels.spotify.com
-DOMAIN-SUFFIX,windows.com
-DOMAIN-SUFFIX,microsoft.com
 DOMAIN-SUFFIX,epicgames.com
 DOMAIN-SUFFIX,spaceship-cdn.com
 DOMAIN-SUFFIX,spaceship.com
@@ -76,3 +74,7 @@ DOMAIN-SUFFIX,xn--gvwa.xyz
 DOMAIN-SUFFIX,cloudflare.com
 DOMAIN-SUFFIX,asus.com
 DOMAIN-SUFFIX,asus.com.cn
+
+
+#DOMAIN-SUFFIX,windows.com
+#DOMAIN-SUFFIX,microsoft.com
