@@ -76,5 +76,5 @@ DOMAIN-SUFFIX,asus.com
 DOMAIN-SUFFIX,asus.com.cn
 
 
-#DOMAIN-SUFFIX,windows.com
-#DOMAIN-SUFFIX,microsoft.com
+DOMAIN-SUFFIX,windows.com
+DOMAIN-SUFFIX,microsoft.com
