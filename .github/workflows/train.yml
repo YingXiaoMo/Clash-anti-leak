@@ -33,7 +33,6 @@ jobs:
       working-directory: Smart/scripts
       run: |
         python train_smart.py
-        python train_flexible.py
 
     - name: Commit trained model
       run: |
