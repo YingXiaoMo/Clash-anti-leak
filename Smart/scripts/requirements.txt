@@ -1,0 +1,4 @@
+pandas>=2.0
+numpy>=1.25
+lightgbm>=4.0
+scikit-learn>=1.3
