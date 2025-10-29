@@ -31,14 +31,13 @@ jobs:
 
     - name: Train Smart Model
       working-directory: Smart/scripts
-      run: |
-        python train_smart.py
+      run: python train_smart.py
 
     - name: Commit trained model
+      working-directory: Smart/scripts
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add ../models/Model.bin
         git commit -m "Update trained model" || echo "No changes to commit"
-        git push
-      working-directory: Smart/scripts
+        git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
