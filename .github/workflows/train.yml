@@ -7,15 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  train-and-release:
+  train:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. 拉取仓库
+    # 1. 拉取仓库代码
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. 设置 Python
+    # 2. 安装 Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -39,12 +39,22 @@ jobs:
       run: |
         python train_smart.py
 
-    # 6. 创建或更新 Release 并上传模型
+    # 6. 提交训练好的模型到仓库（可选）
+    - name: Commit trained model
+      working-directory: Smart/scripts
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add ../models/Model.bin
+        git commit -m "Update trained model" || echo "No changes to commit"
+        git push
+
+    # 7. 上传模型到 GitHub Release
     - name: Upload Model as Release Asset
       uses: ncipollo/release-action@v1
       with:
-        token: ${{ secrets.GH_PAT }}       # 使用你在仓库里创建的 PAT
-        tag: smart-model                   # 固定 tag 名称
-        name: Smart Model                   # Release 名称
-        files: Smart/models/Model.bin       # 模型文件路径
-        overwrite: true                     # 每次覆盖已有 release
+        token: ${{ secrets.GH_PAT }}           # 你仓库里创建的 PAT
+        tag: smart-model                        # 固定 tag，名字不会变
+        name: Smart Model Latest                 # release 名称
+        artifacts: Smart/models/Model.bin       # 上传的模型文件
+        allowUpdates: true                       # 如果 release 已存在，则更新
