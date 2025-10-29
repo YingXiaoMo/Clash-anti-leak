@@ -1,51 +1,45 @@
 name: Auto Train Mihomo Smart Model
 
-# 触发条件：push 或定时
 on:
   push:
     branches:
-      - main
-  schedule:
-    - cron: '0 2 * * *' # 每天 UTC 时间 2 点触发
+      - main  # 或你希望触发的分支
+  workflow_dispatch:
 
 jobs:
   train:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 检出代码
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. 设置 Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.10
 
-      # 3. 安装依赖
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas lightgbm
-
-      # 4. 安装 Go（因为脚本里需要调用 transform.go）
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: 1.21
 
-      # 5. 训练模型
-      - name: Train Smart Model
-        working-directory: Smart/scripts
+      - name: Install Python dependencies
         run: |
+          python -m pip install --upgrade pip
+          pip install -r Smart/scripts/requirements.txt
+
+      - name: Train Smart Model
+        run: |
+          cd Smart/scripts
           python train_smart.py
 
-      # 6. 提交训练生成的模型回仓库
-      - name: Commit trained model
+      - name: Commit and push trained model
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add ../models/Model.bin
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ../models/*
           git commit -m "Update trained model [skip ci]" || echo "No changes to commit"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
