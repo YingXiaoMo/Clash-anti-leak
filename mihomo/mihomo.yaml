@@ -1,0 +1,206 @@
+# 规则并不是越多越好，在满足自己需求情况下，尽量做到精简，不要过度复杂，以免影响性能。
+
+# 机场订阅（所有订阅统一写在同一个 proxy-providers 块中，有多个机场就复制一下，修改"机场订阅"和"Airport1"不要重名即可）
+proxy-providers:
+  Airport1:
+    url: "机场订阅"
+    type: http
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+    proxy: 🎯 全球直连
+
+# 节点信息
+proxies:
+  - {name: 🎯 全球直连, type: direct}	
+  
+  
+  
+# 全局配置
+port: 7890                                                         # HTTP(S) 代理端口
+socks-port: 7891                                                   # SOCKS5 代理端口 
+redir-port: 7892                                                   # 流量转发端口   
+mixed-port: 7893                                                   # HTTP(S)&SOCKS5 混合代理端口
+tproxy-port: 7894                                                  # DNS监听端口
+allow-lan: true                                                    # 允许局域网
+bind-address: "*"                                                  # 局域网ip，*表示所有
+ipv6: true                                                         # ipv6，false表示关闭
+unified-delay: true                                                # 统一延迟
+tcp-concurrent: true                                               # tcp并发
+log-level: info                                                    # 日志等级
+mode: rule                                                         # 运行模式
+find-process-mode: 'off'                                           # 进程匹配                #always，总是匹配             strict，自动匹配
+# interface-name: en0                                              # 绑定网卡
+global-client-fingerprint: chrome                                  # 浏览器伪装
+keep-alive-idle: 600                                               # 修改tcp链接空闲时长，不知道怎么解释，但是能给手机省电
+keep-alive-interval: 15                                            # 这个也是给手机省电的
+disable-keep-alive: false                                          # 关闭手机省电
+profile: {store-selected: true, store-fake-ip: true}               # 选择的节点和fake-ip缓存，false表示关闭
+
+# 控制面板
+#（所有插件都自带可以在设置里下载，所以不写了 ）
+
+# 嗅探
+sniffer:
+  enable: true
+  sniff: {HTTP: {ports: [80, "8080-8880"], override-destination: true}, TLS: {ports: [443, 8443]}, QUIC: {ports: [443, 8443]}}
+  force-domain: ["+.v2ex.com"]
+  skip-domain: [
+    "rule-set:直连顶级域名,直连域名",
+    "dlg.io.mi.com",
+    "+.push.apple.com",
+    "+.apple.com",
+    "+.wechat.com",
+    "+.qpic.cn",
+    "+.qq.com",
+    "+.wechatapp.com",
+    "+.vivox.com",
+    "+.oray.com",
+    "+.sunlogin.net",
+    "+.msftconnecttest.com",
+    "+.msftncsi.com"
+  ]
+
+# 入站
+tun:
+  enable: true                                                           # 开启tun
+  stack: system                                                          # 三种模式,system（兼容性最好但是udp支持不佳）/gvisor（udp支持好）/mixed（结合前两个的优点）
+  dns-hijack: ["any:53", "tcp://any:53"]                                 # 劫持53端口
+  auto-route: true                                                       # 自动路由
+  auto-redirect: true                                                    # 自动重定向
+  auto-detect-interface: true                                            # 自动接口选择
+
+# DNS模块
+dns:
+  enable: true                                                           # 开启dns
+  listen: "0.0.0.0:1053"                                                 # dns端口
+  ipv6: true                                                             # ipv6
+  respect-rules: true                                                    # 遵循路由规则
+  enhanced-mode: fake-ip                                                 # 模式选择
+  fake-ip-range: "198.18.0.1/16"                                         # fake-ip地址池
+  fake-ip-filter-mode: blacklist                                         # 黑白名单
+  fake-ip-filter: [
+    "rule-set:直连顶级域名,直连域名",
+    "+.services.googleapis.cn",
+    "+.xn--ngstr-lra8j.com",
+    "time.*.com",
+    "+.pool.ntp.org",
+    "+.ntp.tencent.com",
+    "+.ntp1.aliyun.com",
+    "+.ntp.ntsc.ac.cn",
+    "+.cn.ntp.org.cn",
+    "+.serv00.com"
+  ]
+  default-nameserver: [223.5.5.5]
+  proxy-server-nameserver: ["https://dns.alidns.com/dns-query"]
+  nameserver: [223.5.5.5, 119.29.29.29]                                # 尽量使用运营商的DNS
+
+# 出站策略
+#我自己用的节点比较多，所以首选的都是负载均衡，有需要可以自己改一下顺序。
+# 注意锚点必须放在引用的上方，可以集中把锚点全部放yaml的顶部。
+dl: &dl {type: select, proxies: [🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🛰️ 自建节点, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换, 🎯 全球直连]} 
+zl: &zl {type: select, proxies: [🎯 全球直连, 🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🛰️ 自建节点, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换]} 
+zj: &zj {type: select, proxies: [🛰️ 自建节点, 🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换, 🎯 全球直连]} 
+
+emby: &emby {type: select, proxies: [🎬 emby节点, 🎯 全球直连, 🛰️ 自建节点,♻️ 自动选择,🚀 手动切换]} 
+
+gpt: &gpt {type: select, proxies: [🤖 GPT节点, 🚀 手动切换, 🔄 轮询负载, 🎲 散列负载, 🛰️ 自建节点]} 
+
+proxy-groups:
+  - {name: 🐟 漏网之鱼, <<: *dl}  
+  - {name: 🕺 自用代理, <<: *dl} 
+  - {name: 🎬 emby,  <<: *emby} 
+  - {name: 🎮 游戏平台,  <<: *zl} 
+  - {name: 🎮 steam社区,  <<: *dl} 
+  - {name: 🌪 GitHub, <<: *zj} 
+  - {name: 📲 电报消息,  <<: *dl} 
+  - {name: 🤖 AI服务,  <<: *gpt} 
+  - {name: 📹 油管视频,  <<: *dl} 
+  - {name: 🇬 谷歌服务, <<: *dl} 
+  - {name: 📢 谷歌FCM,  <<: *zl}
+  - {name: 🍎 苹果服务,  <<: *zl} 
+  - {name: 🪟 微软云盘, <<: *zl} 
+  - {name: 🪟 微软服务,  <<: *zl} 
+  - {name: 📈 网络测试,  <<: *zl} 
+  - {name: 🧱 代理域名,  <<: *dl} 
+#  - {name: 🛑 广告过滤, type: select, proxies: [REJECT, DIRECT]}                     ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
+  
+  - {name: 🚀 手动切换, type: select, include-all: true, exclude-type: direct} 
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, exclude-type: direct}  
+  - {name: 🔄 轮询负载, type: load-balance, strategy: round-robin, interval: 180, tolerance: 30, include-all: true, filter: "^((?!(直连|日本|JP|Japan|韩国|韩|KR|Korea|South Korea)).)*$"}
+  - {name: 🎲 散列负载, type: load-balance, strategy: consistent-hashing, interval: 180, tolerance: 30, include-all: true,filter: "^((?!(直连|日本|JP|Japan|韩国|韩|KR|Korea|South Korea)).)*$"}
+   
+  - {name: 🛰️ 自建节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)自建"}
+  - {name: 🇸🇬 新加坡节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
+  - {name: 🇭🇰 香港节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)港|hk|hongkong|hong kong"}
+  - {name: 🇯🇵 日本节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)日|jp|japan" }
+  - {name: 🇺🇸 美国节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)(?!.*United States).*(美|\\bus\\b)"}
+  - {name: 🤖 GPT节点, type: url-test, include-all: true, tolerance: 20, interval: 180, filter: "(?i)(?!.*United States).*(GPT|美|\\bus\\b)"}
+  - {name: 🎬 emby节点,type: load-balance, strategy: round-robin, include-all: true,tolerance: 20,interval: 180,filter: "(?=.*(香港|港|HK|hongkong|深港|新加坡|坡|狮城|SG|Singapore|美|us|unitedstates|united states|0.1|0.01))^((?!(日本|JP|Japan|韩国|韩|KR|Korea|South Korea|台|新北|彰化|TW|Taiwan)).)*$"}
+  - {name: 🧩 其他地区, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
+
+
+# 规则匹配
+rules:
+  - RULE-SET,私有域名 ,🎯 全球直连
+  - RULE-SET,直连软件,🎯 全球直连
+  - RULE-SET,游戏平台,🎮 游戏平台
+  - RULE-SET,steam社区,🎮 steam社区
+#  - RULE-SET,广告 ,🛑 广告过滤                                  ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
+  - RULE-SET,BT下载,🎯 全球直连
+  - RULE-SET,电报域名,📲 电报消息
+  - RULE-SET,GitHub,🌪 GitHub
+  - RULE-SET,油管视频,📹 油管视频
+  - RULE-SET,谷歌FCM,📢 谷歌FCM
+  - RULE-SET,谷歌域名,🇬 谷歌服务
+  - RULE-SET,谷歌cn,🎯 全球直连
+  - RULE-SET,微软云盘,🪟 微软云盘
+  - RULE-SET,微软服务,🪟 微软服务
+  - RULE-SET,苹果服务,🍎 苹果服务
+  - RULE-SET,AI服务,🤖 AI服务
+  - RULE-SET,网络测试,📈 网络测试
+  - RULE-SET,代理顶级域名,🧱 代理域名
+  - RULE-SET,代理域名,🧱 代理域名
+  - RULE-SET,直连顶级域名,🎯 全球直连
+  - RULE-SET,直连域名,🎯 全球直连
+  - RULE-SET,私有ip ,🎯 全球直连
+  - RULE-SET,国内ip,🎯 全球直连
+  - RULE-SET,电报消息,📲 电报消息,no-resolve
+  - RULE-SET,谷歌ip,🇬 谷歌服务,no-resolve
+
+  - MATCH,🐟 漏网之鱼
+
+# 规则集
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+rule-providers: 
+  fakeip过滤: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs"}  
+  steam社区: { <<: *class, url: "https://raw.githubusercontent.com/YingXiaoMo/Clash-anti-leak/refs/heads/main/Self-use-rules/steamCommunity.list"} 
+  游戏平台: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/games-cn.mrs"} 
+  私有域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.mrs"} 
+  BT下载: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/trackerslist.mrs"} 
+  直连软件: { <<: *class, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/applications.list"} 
+  微软云盘: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"} 
+  微软服务: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/microsoft-cn.mrs"} 
+  苹果服务: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/apple-cn.mrs"} 
+  谷歌cn: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/google-cn.mrs"} 
+  油管视频: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/youtube.mrs"} 
+  AI服务: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ai.mrs"} 
+  网络测试: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"} 
+  GitHub: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"} 
+  谷歌FCM: { <<: *class, url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleFCM/GoogleFCM.list"} 
+  谷歌域名: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"} 
+  电报域名: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"} 
+  代理顶级域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/tld-proxy.mrs"} 
+  代理域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/proxy.mrs"} 
+  直连顶级域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/tld-cn.mrs"} 
+  直连域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cn.mrs"} 
+  私有ip: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/privateip.mrs"} 
+  国内ip: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cnip.mrs"} 
+  谷歌ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"} 
+  电报消息: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/telegramip.mrs"} 
+#  广告: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ads.mrs"}                             ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。

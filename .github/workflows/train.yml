@@ -1,0 +1,45 @@
+name: Smart Model Training
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r Smart/scripts/requirements.txt
+
+    - name: Install Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Train Smart Model
+      working-directory: Smart/scripts
+      run: |
+        python train_smart.py
+        python train_flexible.py
+
+    - name: Commit trained model
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add ../models/Model.bin
+        git commit -m "Update trained model" || echo "No changes to commit"
+        git push
+      working-directory: Smart/scripts
