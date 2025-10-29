@@ -7,46 +7,81 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # 必须写，否则 release 没权限
+  contents: write   # 必须写，否则无法 push 或创建 release
 
 jobs:
   train:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 拉取代码
+      # -----------------------------------
+      # 1️⃣ 拉取代码
+      # -----------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2. 安装 Python
+      # -----------------------------------
+      # 2️⃣ 安装 Python
+      # -----------------------------------
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. 安装依赖
+      # -----------------------------------
+      # 3️⃣ 安装 Python 依赖
+      # -----------------------------------
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r Smart/scripts/requirements.txt
 
-      # 4. 安装 Go
+      # -----------------------------------
+      # 4️⃣ 安装 Go 环境
+      # -----------------------------------
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.21'
 
-      # 5. 训练 Smart 模型
+      # -----------------------------------
+      # 5️⃣ 训练 Smart 模型
+      # -----------------------------------
       - name: Train Smart Model
         working-directory: Smart/scripts
         run: python train_smart.py
 
-      # 6. 创建或更新 release，固定 tag 名称
-      - name: Create/Update Smart Model Release
+      # -----------------------------------
+      # 6️⃣ 提交并推送训练好的模型文件
+      # -----------------------------------
+      - name: Commit and push trained model
+        working-directory: Smart
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 添加模型文件
+          git add models/Model.bin
+
+          # 提交变更，如果没有变化就跳过
+          git commit -m "🤖 Auto update trained Smart model" || echo "No changes to commit"
+
+          # 推送到 main 分支（使用 GH_PAT 鉴权）
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git HEAD:main
+
+      # -----------------------------------
+      # 7️⃣ 创建或更新 Release（固定 tag 名）
+      # -----------------------------------
+      - name: Create or Update Smart Model Release
         uses: ncipollo/release-action@v1
         with:
           tag: smart-model
           name: Smart Model
-          artifacts: Smart/models/Model.bin
+          body: "自动训练生成的 Smart 模型文件。"
           allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: true
+          artifacts: Smart/models/Model.bin
           token: ${{ secrets.GH_PAT }}
