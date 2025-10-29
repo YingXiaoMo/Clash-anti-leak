@@ -7,38 +7,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  train:
+  train-and-release:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. 拉取仓库
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # 2. 设置 Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
+    # 3. 安装依赖
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r Smart/scripts/requirements.txt
 
-    - name: Install Go
+    # 4. 安装 Go
+    - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
+    # 5. 训练 Smart 模型
     - name: Train Smart Model
       working-directory: Smart/scripts
-      run: python train_smart.py
+      run: |
+        python train_smart.py
 
-    - name: Create / Update GitHub Release with model
+    # 6. 创建或更新 Release 并上传模型
+    - name: Upload Model as Release Asset
       uses: ncipollo/release-action@v1
       with:
-        tag: smart-model-latest          # 固定 tag
-        name: Smart Model Latest         # 固定 release 名
-        files: Smart/models/Model.bin    # 要上传的文件路径
-        overwrite: true                  # 每次覆盖已有 release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # 你之前创建的 token
+        token: ${{ secrets.GH_PAT }}       # 使用你在仓库里创建的 PAT
+        tag: smart-model                   # 固定 tag 名称
+        name: Smart Model                   # Release 名称
+        files: Smart/models/Model.bin       # 模型文件路径
+        overwrite: true                     # 每次覆盖已有 release
