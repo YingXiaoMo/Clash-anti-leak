@@ -1,6 +1,5 @@
 name: Smart Model Training
 
-# 触发方式：push 到 main 或者手动触发
 on:
   push:
     branches:
@@ -8,47 +7,46 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # 允许更新 release
+  contents: write   # 必须写，否则 release 没权限
 
 jobs:
   train:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ 获取仓库代码
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1. 拉取代码
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # 2️⃣ 设置 Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      # 2. 安装 Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    # 3️⃣ 安装依赖
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r Smart/scripts/requirements.txt
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r Smart/scripts/requirements.txt
 
-    # 4️⃣ 安装 Go（train_smart.py 会调用 go_transform）
-    - name: Install Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
+      # 4. 安装 Go
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
 
-    # 5️⃣ 训练 Smart 模型
-    - name: Train Smart Model
-      working-directory: Smart/scripts
-      run: |
-        python train_smart.py
+      # 5. 训练 Smart 模型
+      - name: Train Smart Model
+        working-directory: Smart/scripts
+        run: python train_smart.py
 
-    # 6️⃣ 上传模型到 Release（不修改仓库代码）
-    - name: Create/Update Smart Model Release
-      uses: ncipollo/release-action@v1
-      with:
-        tag: smart-model          # 固定 release 名称
-        name: Smart Model
-        files: Smart/models/Model.bin
-        overwrite: true
-        token: ${{ secrets.GH_PAT }}
+      # 6. 创建或更新 release，固定 tag 名称
+      - name: Create/Update Smart Model Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: smart-model
+          name: Smart Model
+          artifacts: Smart/models/Model.bin
+          allowUpdates: true
+          token: ${{ secrets.GH_PAT }}
