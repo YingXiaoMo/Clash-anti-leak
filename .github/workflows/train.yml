@@ -11,48 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ 检出仓库
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2️⃣ 设置 Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 3️⃣ 安装依赖
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r Smart/scripts/requirements.txt
 
-    # 4️⃣ 安装 Go
     - name: Install Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
-    # 5️⃣ 训练 Smart 模型
     - name: Train Smart Model
       working-directory: Smart/scripts
-      run: |
-        python train_smart.py
+      run: python train_smart.py
 
-    # 6️⃣ 提交并推送训练好的模型
-    - name: Commit trained model
-      working-directory: Smart/scripts
-      run: |
-        # 配置 Git 用户信息
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-
-        # 用 GH_PAT 替换 origin URL，解决 403
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git
-
-        # 添加并提交模型文件
-        git add ../models/Model.bin
-        git commit -m "Update trained model" || echo "No changes to commit"
-
-        # 推送到 main 分支
-        git push origin main
+    - name: Create / Update GitHub Release with model
+      uses: ncipollo/release-action@v1
+      with:
+        tag: smart-model-latest          # 固定 tag
+        name: Smart Model Latest         # 固定 release 名
+        files: Smart/models/Model.bin    # 要上传的文件路径
+        overwrite: true                  # 每次覆盖已有 release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # 你之前创建的 token
