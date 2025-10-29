@@ -136,11 +136,11 @@ proxy-groups:
   - {name: 🧩 其他手动, type: select, include-all: true, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
 
 # 故障转移
-  - {name: 🇸🇬 新加坡故转, type: fallback, interval: 60, lazy: false, proxies: [🇸🇬 新加坡智能, 🇸🇬 新加坡自动, 🇸🇬 新加坡手动]} 
-  - {name: 🇭🇰 香港故转, type: fallback, interval: 60, lazy: false, proxies: [🇭🇰 香港智能, 🇭🇰 香港自动, 🇭🇰 香港手动]}       
-  - {name: 🇯🇵 日本故转, type: fallback, interval: 60, lazy: false, proxies: [🇯🇵 日本智能, 🇯🇵 日本自动, 🇯🇵 日本手动]}
-  - {name: 🇺🇸 美国故转, type: fallback, interval: 60, lazy: false, proxies: [🇺🇸 美国智能, 🇺🇸 美国自动, 🇺🇸 美国手动]}
-  - {name: 🧩 其他故转, type: fallback, interval: 60, lazy: false, proxies: [🧩 其他智能, 🧩 其他自动, 🧩 其他手动]}
+  - {name: 🇸🇬 新加坡故转, type: fallback, interval: 60, lazy: false, proxies: [🇸🇬 新加坡负载均衡, 🇸🇬 新加坡自动, 🇸🇬 新加坡手动]} 
+  - {name: 🇭🇰 香港故转, type: fallback, interval: 60, lazy: false, proxies: [🇭🇰 香港负载均衡, 🇭🇰 香港自动, 🇭🇰 香港手动]}       
+  - {name: 🇯🇵 日本故转, type: fallback, interval: 60, lazy: false, proxies: [🇯🇵 日本负载均衡, 🇯🇵 日本自动, 🇯🇵 日本手动]}
+  - {name: 🇺🇸 美国故转, type: fallback, interval: 60, lazy: false, proxies: [🇺🇸 美国负载均衡, 🇺🇸 美国自动, 🇺🇸 美国手动]}
+  - {name: 🧩 其他故转, type: fallback, interval: 60, lazy: false, proxies: [🧩 其他负载均衡, 🧩 其他自动, 🧩 其他手动]}
 
 # 自动选择
   - {name: 🇸🇬 新加坡自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
