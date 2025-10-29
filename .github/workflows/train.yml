@@ -1,64 +1,44 @@
 name: Smart Model Training
 
-# 触发条件
 on:
   push:
     branches:
       - main
-  workflow_dispatch:   # 手动触发
+  workflow_dispatch:
 
 jobs:
   train:
     runs-on: ubuntu-latest
 
-    # 给 GitHub Token 写权限（如果用 GH_PAT 可以不用）
-    permissions:
-      contents: write
-
     steps:
-    # 1️⃣ 拉取仓库代码
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2️⃣ 设置 Python 环境
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 3️⃣ 安装 Python 依赖
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r Smart/scripts/requirements.txt
 
-    # 4️⃣ 安装 Go 环境
     - name: Install Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
-    # 5️⃣ 训练 Smart 模型
     - name: Train Smart Model
       working-directory: Smart/scripts
-      run: |
-        python train_smart.py
+      run: python train_smart.py
 
-    # 6️⃣ 提交并推送训练好的模型
-    - name: Commit and push trained model
-      working-directory: Smart/scripts
+    - name: Create / Update GitHub Release with model
+      uses: ncipollo/release-action@v1
+      with:
+        tag: smart-model-latest          # 固定 tag
+        name: Smart Model Latest         # 固定 release 名
+        files: Smart/models/Model.bin    # 要上传的文件路径
+        overwrite: true                  # 每次覆盖已有 release
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}  # 使用你在仓库里创建的 Token
-      run: |
-        # 配置 Git 用户信息
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-
-        # 添加模型文件
-        git add ../models/Model.bin
-
-        # 提交变更，如果没有变更就输出信息
-        git commit -m "Update trained model" || echo "No changes to commit"
-
-        # 用 GH_PAT 推送到 main 分支
-        git push https://x-access-token:${GH_PAT}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # 你之前创建的 token
