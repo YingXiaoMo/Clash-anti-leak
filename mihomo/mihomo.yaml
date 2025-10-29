@@ -90,8 +90,7 @@ dns:
     "+.ntp.tencent.com",
     "+.ntp1.aliyun.com",
     "+.ntp.ntsc.ac.cn",
-    "+.cn.ntp.org.cn",
-    "+.serv00.com"
+    "+.cn.ntp.org.cn"
   ]
   default-nameserver: [223.5.5.5]
   proxy-server-nameserver: ["https://dns.alidns.com/dns-query"]
@@ -100,46 +99,61 @@ dns:
 # 出站策略
 #我自己用的节点比较多，所以首选的都是负载均衡，有需要可以自己改一下顺序。
 # 注意锚点必须放在引用的上方，可以集中把锚点全部放yaml的顶部。
-dl: &dl {type: select, proxies: [🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🛰️ 自建节点, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换, 🎯 全球直连]} 
-zl: &zl {type: select, proxies: [🎯 全球直连, 🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🛰️ 自建节点, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换]} 
-zj: &zj {type: select, proxies: [🛰️ 自建节点, 🔄 轮询负载, 🎲 散列负载, ♻️ 自动选择, 🇭🇰 香港节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🧩 其他地区, 🚀 手动切换, 🎯 全球直连]} 
 
-emby: &emby {type: select, proxies: [🎬 emby节点, 🎯 全球直连, 🛰️ 自建节点,♻️ 自动选择,🚀 手动切换]} 
-
-gpt: &gpt {type: select, proxies: [🤖 GPT节点, 🚀 手动切换, 🔄 轮询负载, 🎲 散列负载, 🛰️ 自建节点]} 
+all: &all {type: select, proxies: [ 🇸🇬 新加坡负载均衡, 🇭🇰 香港负载均衡, 🇯🇵 日本负载均衡, 🇺🇸 美国负载均衡, 🧩 其他负载均衡, 🇸🇬 新加坡故转, 🇭🇰 香港故转, 🇯🇵 日本故转, 🇺🇸 美国故转, 🧩 其他故转, 🚀 全部手动, 🎯 全球直连]} 
 
 proxy-groups:
-  - {name: 🐟 漏网之鱼, <<: *dl}  
-  - {name: 🕺 自用代理, <<: *dl} 
-  - {name: 🎬 emby,  <<: *emby} 
-  - {name: 🎮 游戏平台,  <<: *zl} 
-  - {name: 🎮 steam社区,  <<: *dl} 
-  - {name: 🌪 GitHub, <<: *zj} 
-  - {name: 📲 电报消息,  <<: *dl} 
-  - {name: 🤖 AI服务,  <<: *gpt} 
-  - {name: 📹 油管视频,  <<: *dl} 
-  - {name: 🇬 谷歌服务, <<: *dl} 
-  - {name: 📢 谷歌FCM,  <<: *zl}
-  - {name: 🍎 苹果服务,  <<: *zl} 
-  - {name: 🪟 微软云盘, <<: *zl} 
-  - {name: 🪟 微软服务,  <<: *zl} 
-  - {name: 📈 网络测试,  <<: *zl} 
-  - {name: 🧱 代理域名,  <<: *dl} 
-#  - {name: 🛑 广告过滤, type: select, proxies: [REJECT, DIRECT]}                     ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
+  - {name: 🐟 漏网之鱼, <<: *all}  
+  - {name: 🎮 游戏平台,  <<: *all} 
+  - {name: 🎮 Steam社区,  <<: *all} 
+  - {name: 🌪 GitHub, <<: *all} 
+  - {name: 📲 电报消息,  <<: *all} 
+  - {name: 🤖 AI服务,  <<: *all} 
+  - {name: 📹 油管视频,  <<: *all} 
+  - {name: 🇬 谷歌服务, <<: *all} 
+  - {name: 📢 谷歌FCM,  <<: *all}
+  - {name: 🍎 苹果服务,  <<: *all} 
+  - {name: 🪟 微软云盘, <<: *all} 
+  - {name: 🪟 微软服务,  <<: *all} 
+  - {name: 📈 网络测试,  <<: *all} 
+  - {name: 🧱 代理域名,  <<: *all} 
+#  - {name: 🛑 广告过滤, type: select, proxies: [REJECT, DIRECT]} 
   
-  - {name: 🚀 手动切换, type: select, include-all: true, exclude-type: direct} 
-  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, exclude-type: direct}  
-  - {name: 🔄 轮询负载, type: load-balance, strategy: round-robin, interval: 180, tolerance: 30, include-all: true, filter: "^((?!(直连|日本|JP|Japan|韩国|韩|KR|Korea|South Korea)).)*$"}
-  - {name: 🎲 散列负载, type: load-balance, strategy: consistent-hashing, interval: 180, tolerance: 30, include-all: true,filter: "^((?!(直连|日本|JP|Japan|韩国|韩|KR|Korea|South Korea)).)*$"}
-   
-  - {name: 🛰️ 自建节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)自建"}
-  - {name: 🇸🇬 新加坡节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180,  filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
-  - {name: 🇭🇰 香港节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)港|hk|hongkong|hong kong"}
-  - {name: 🇯🇵 日本节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)日|jp|japan" }
-  - {name: 🇺🇸 美国节点, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)(?!.*United States).*(美|\\bus\\b)"}
-  - {name: 🤖 GPT节点, type: url-test, include-all: true, tolerance: 20, interval: 180, filter: "(?i)(?!.*United States).*(GPT|美|\\bus\\b)"}
-  - {name: 🎬 emby节点,type: load-balance, strategy: round-robin, include-all: true,tolerance: 20,interval: 180,filter: "(?=.*(香港|港|HK|hongkong|深港|新加坡|坡|狮城|SG|Singapore|美|us|unitedstates|united states|0.1|0.01))^((?!(日本|JP|Japan|韩国|韩|KR|Korea|South Korea|台|新北|彰化|TW|Taiwan)).)*$"}
-  - {name: 🧩 其他地区, type: load-balance, strategy: round-robin, include-all: true, tolerance: 20, interval: 180, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
+# 全部节点  
+  - {name: 🚀 全部手动, type: select, include-all: true, exclude-type: direct} 
+# - {name: ♻️ 全部自动, type: url-test, include-all: true, tolerance: 20, interval: 120, exclude-type: direct}  
+# - {name: ✨ 全部智能, type: smart, uselightgbm: true, collectdata: true, strategy: round-robin, interval: 120, include-all: true, exclude-type: direct}
+# - {name: 🔄 轮询负载, type: load-balance, strategy: round-robin, interval: 120, tolerance: 30, include-all: true, exclude-type: direct}
+# - {name: 🎲 散列负载, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, exclude-type: direct}
+
+# 手动选择
+  - {name: 🇸🇬 新加坡手动, type: select, include-all: true, filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
+  - {name: 🇭🇰 香港手动, type: select, include-all: true, filter: "(?i)港|hk|hongkong|hong kong"}
+  - {name: 🇯🇵 日本手动, type: select, include-all: true, filter: "(?i)日本|jp|japan" }
+  - {name: 🇺🇸 美国手动, type: select, include-all: true, filter: "(?i)(us|united states|美国|美区)"} 
+  - {name: 🧩 其他手动, type: select, include-all: true, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
+
+# 故障转移
+  - {name: 🇸🇬 新加坡故转, type: fallback, interval: 60, lazy: false, proxies: [🇸🇬 新加坡智能, 🇸🇬 新加坡自动, 🇸🇬 新加坡手动]} 
+  - {name: 🇭🇰 香港故转, type: fallback, interval: 60, lazy: false, proxies: [🇭🇰 香港智能, 🇭🇰 香港自动, 🇭🇰 香港手动]}       
+  - {name: 🇯🇵 日本故转, type: fallback, interval: 60, lazy: false, proxies: [🇯🇵 日本智能, 🇯🇵 日本自动, 🇯🇵 日本手动]}
+  - {name: 🇺🇸 美国故转, type: fallback, interval: 60, lazy: false, proxies: [🇺🇸 美国智能, 🇺🇸 美国自动, 🇺🇸 美国手动]}
+  - {name: 🧩 其他故转, type: fallback, interval: 60, lazy: false, proxies: [🧩 其他智能, 🧩 其他自动, 🧩 其他手动]}
+
+# 自动选择
+  - {name: 🇸🇬 新加坡自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
+  - {name: 🇭🇰 香港自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)港|hk|hongkong|hong kong"}
+  - {name: 🇯🇵 日本自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)日本|jp|japan" }
+  - {name: 🇺🇸 美国自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)(us|united states|美国|美区)"} 
+  - {name: 🧩 其他自动, type: url-test, include-all: true, tolerance: 20, interval: 120,  filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
+
+
+# 负载均衡   
+  - {name: 🇸🇬 新加坡负载均衡, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, filter: "(?i)新加坡|坡|狮城|SG|Singapore"} 
+  - {name: 🇭🇰 香港负载均衡, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, filter: "(?i)港|hk|hongkong|hong kong"}
+  - {name: 🇯🇵 日本负载均衡, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, filter: "(?i)日本|jp|japan" }
+  - {name: 🇺🇸 美国负载均衡, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, filter: "(?i)(us|united states|美国|美区)"} 
+  - {name: 🧩 其他负载均衡, type: load-balance, strategy: consistent-hashing, interval: 120, tolerance: 30, include-all: true, filter: "(?i)^(?!.*(?:🇭🇰|🇯🇵|🇺🇸|🇸🇬|🇨🇳|港|hk|hongkong|台|tw|taiwan|日|直连|jp|japan|新|sg|singapore|美|us|unitedstates)).*"} 
 
 
 # 规则匹配
