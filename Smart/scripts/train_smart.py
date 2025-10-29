@@ -25,7 +25,7 @@ ROBUST_SCALER_FEATURES = ['success', 'failure']
 
 LGBM_PARAMS = {
     'objective': 'regression', 'metric': 'rmse', 'n_estimators': 1000,
-    'learning_rate': 0.03, 'random_state': 42, 'n_jobs': -1, 'device': 'gpu'
+    'learning_rate': 0.03, 'random_state': 42, 'n_jobs': -1, 'device': 'cpu'
 }
 EARLY_STOPPING_ROUNDS = 100
 EXPECTED_COLS = 37  # 数据列数，必须和 CSV 实际列数一致
