@@ -1,5 +1,6 @@
 name: Smart Model Training
 
+# 触发条件：push 到 main 或手动触发
 on:
   push:
     branches:
@@ -11,49 +12,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ 拉取仓库最新代码
+    # 1. 拉取仓库代码
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2️⃣ 设置 Python 环境
+    # 2. 设置 Python 环境
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 3️⃣ 安装依赖
+    # 3. 安装 Python 依赖
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r Smart/scripts/requirements.txt
 
-    # 4️⃣ 安装 Go 环境（train_smart.py 依赖）
+    # 4. 安装 Go
     - name: Install Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
-    # 5️⃣ 训练 Smart 模型
+    # 5. 训练 Smart 模型
     - name: Train Smart Model
       working-directory: Smart/scripts
       run: |
         python train_smart.py
 
-    # 6️⃣ 提交训练好的模型
+    # 6. 提交训练好的模型到仓库
     - name: Commit trained model
       working-directory: Smart/scripts
-      env:
-        GH_PAT: ${{ secrets.GH_PAT }}  # 使用你在仓库里创建的 token
       run: |
         # 配置 Git 用户信息
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
 
-        # 将训练好的模型加入 Git 暂存区
+        # 添加模型文件
         git add ../models/Model.bin
 
-        # 提交修改，如果没有变化就跳过
+        # 提交，如果没有变动不会报错
         git commit -m "Update trained model" || echo "No changes to commit"
 
-        # 使用 token 推送到远程仓库，避免 403
-        git push https://x-access-token:${GH_PAT}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
+        # 使用 PAT 推送到 main 分支
+        git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
