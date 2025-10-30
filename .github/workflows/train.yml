@@ -1,62 +1,115 @@
-name: Smart Model Training
+name: Train and Deploy Smart Model
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'Smart/**'
   workflow_dispatch:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   train:
     runs-on: ubuntu-latest
+    
+    env:
+      RCLONE_CONFIG_B64: ${{ secrets.RCLONE_CONFIG_B64 }}
+      REMOTE: ${{ secrets.REMOTE }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r smart/scripts/requirements.txt
+    
+    - name: Set up rclone config
+      run: |
+        echo "$RCLONE_CONFIG_B64" | base64 -d > rclone.conf
+
+    - name: Download and Install rclone
+      run: |
+        curl -Of https://downloads.rclone.org/rclone-current-linux-amd64.zip
+        unzip rclone-current-linux-amd64.zip
+        RCLONE_DIR=$(find . -maxdepth 1 -type d -name "rclone-v*-linux-amd64")
+        sudo mv "$RCLONE_DIR"/rclone /usr/bin/rclone
+        rclone version
+
+    - name: Pull CSV from Google Drive
+      run: |
+        rclone copy "$REMOTE" ./data --config rclone.conf --transfers=4 --checkers=8 --log-level=INFO
+        
+    - name: Check for CSV data files
+      run: |
+        if [ ! -d ./data ] || [ -z "$(ls -A ./data)" ]; then
+          echo "::error::Data directory is empty or not found. Cannot proceed with training."
+          exit 1
+        fi
+
+    - name: Run model training script
+      run: python train_flexible.py
+      working-directory: smart/scripts/
+      
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: model-artifact
+        path: models/Model.bin
+        
+    - name: Clean up temporary files
+      run: |
+        rm -rf ./data
+        rm rclone.conf
+          
+  deploy_release:
+    needs: train
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      LATEST_TAG: smart-model
+
+    steps:
+      - name: Checkout repository for Tagging
+        uses: actions/checkout@v4
         with:
-          python-version: '3.11'
+          fetch-depth: 0 
+        
+      - name: Download Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: model-artifact
+          path: models/ 
 
-      - name: Install dependencies
+      - name: Configure Git for Tag Update
         run: |
-          pip install --upgrade pip
-          pip install -r Smart/scripts/requirements.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-
-      - name: Train Smart Model
-        working-directory: Smart/scripts
-        run: python train_smart.py
-
-      - name: Commit and push trained model
-        working-directory: Smart/scripts
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Overwrite Latest Tag
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git push --delete origin "$LATEST_TAG" 2>/dev/null || true 
+          git tag -f "$LATEST_TAG"
+          git push origin "$LATEST_TAG"
 
-          touch ../models/Model.bin
-
-          git add ../models/Model.bin
-          git commit -m "🤖 Auto update trained Smart model ($(date '+%Y-%m-%d %H:%M:%S'))" || echo "No changes to commit"
-          git push https://x-access-token:${GH_PAT}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
-
-      - name: Create/Update Smart Model Release
-        uses: ncipollo/release-action@v1
+      - name: Create or Update Permanent Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag: smart-model
+          tag_name: ${{ env.LATEST_TAG }}
           name: Smart Model
-          artifacts: Smart/models/Model.bin
-          allowUpdates: true
-          token: ${{ secrets.GH_PAT }}
+          overwrite: true
+          files: models/Model.bin
+          body: |
+            ✨ Permanent Model Link Updated.
+            - Model Source Commit: ${{ github.sha }}
+            - Training Run ID: ${{ github.run_id }}
