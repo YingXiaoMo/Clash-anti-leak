@@ -5,59 +5,58 @@ on:
     branches:
       - main
     paths:
-      - 'Smart/**'    
+      - 'Smart/**'
   workflow_dispatch:
-  
+
 permissions:
   contents: write
-  
+
 jobs:
   train:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        
+        uses: actions/checkout@v3
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-          
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r Smart/scripts/requirements.txt
-          
+
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v4
         with:
           go-version: '1.21'
-          cache: false
-          
+
       - name: Train Smart Model
         working-directory: Smart/scripts
         run: python train_smart.py
-        
+
       - name: Commit and push trained model
-        working-directory: Smart
+        working-directory: Smart/scripts
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add models/Model.bin
-          git commit -m "🤖 Auto update trained Smart model" || echo "No changes to commit"
-          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git HEAD:main
-          
-      - name: Create or Update Smart Model Release
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          touch ../models/Model.bin
+
+          git add ../models/Model.bin
+          git commit -m "🤖 Auto update trained Smart model ($(date '+%Y-%m-%d %H:%M:%S'))" || echo "No changes to commit"
+          git push https://x-access-token:${GH_PAT}@github.com/YingXiaoMo/Mihomo-Personal-Rules.git HEAD:main
+
+      - name: Create/Update Smart Model Release
         uses: ncipollo/release-action@v1
         with:
           tag: smart-model
           name: Smart Model
-          body: "自动训练生成的 Smart 模型文件。"
-          allowUpdates: true
-          replacesArtifacts: true
-          makeLatest: true
           artifacts: Smart/models/Model.bin
+          allowUpdates: true
           token: ${{ secrets.GH_PAT }}
