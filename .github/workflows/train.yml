@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Smart/**'
+      - '.github/workflows/train_and_deploy.yml'
+      
+  schedule:
+    # 每天北京时间 08:00 运行 (对应 UTC 00:00)
+    - cron: '0 0 * * *'
+  
   workflow_dispatch:
 
 permissions:
@@ -30,7 +38,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        # 修正路径大小写
+        # 路径修正: Smart/scripts/requirements.txt
         pip install -r Smart/scripts/requirements.txt 
     
     - name: Set up rclone config
@@ -51,15 +59,13 @@ jobs:
         
     - name: Check for CSV data files
       run: |
-        if [ ! -d ./data ] || [ [ -z "$(ls -A ./data)" ] ]; then
+        if [ ! -d ./data ] || [ -z "$(ls -A ./data)" ]; then
           echo "::error::Data directory is empty or not found. Cannot proceed with training."
           exit 1
         fi
 
     - name: Run model training script
-      # 修正：使用 train_smart.py
       run: python train_smart.py
-      # 修正路径大小写
       working-directory: Smart/scripts/
       
     - name: Upload model artifact
