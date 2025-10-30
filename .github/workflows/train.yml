@@ -30,7 +30,8 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r smart/scripts/requirements.txt
+        # 修正路径大小写
+        pip install -r Smart/scripts/requirements.txt 
     
     - name: Set up rclone config
       run: |
@@ -50,14 +51,16 @@ jobs:
         
     - name: Check for CSV data files
       run: |
-        if [ ! -d ./data ] || [ -z "$(ls -A ./data)" ]; then
+        if [ ! -d ./data ] || [ [ -z "$(ls -A ./data)" ] ]; then
           echo "::error::Data directory is empty or not found. Cannot proceed with training."
           exit 1
         fi
 
     - name: Run model training script
+      # 修正：使用 train_smart.py
       run: python train_smart.py
-      working-directory: smart/scripts/
+      # 修正路径大小写
+      working-directory: Smart/scripts/
       
     - name: Upload model artifact
       uses: actions/upload-artifact@v4
