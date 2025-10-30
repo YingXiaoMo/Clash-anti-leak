@@ -56,7 +56,7 @@ jobs:
         fi
 
     - name: Run model training script
-      run: python smart.py
+      run: python train_smart.py
       working-directory: smart/scripts/
       
     - name: Upload model artifact
