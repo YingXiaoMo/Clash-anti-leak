@@ -79,12 +79,12 @@ dns:
   enable: true                                                           # 开启dns
   listen: "0.0.0.0:1053"                                                 # dns端口
   ipv6: true                                                             # ipv6
-  respect-rules: true                                                    # 遵循路由规则
+  respect-rules: true                                                    # 遵循路由规则，让连接DNS服务器时能够遵循规则，也就是通过代理节点连接到上面设置的国外DNS，因为直连可能连接不上
   enhanced-mode: fake-ip                                                 # 模式选择
   fake-ip-range: "198.18.0.1/16"                                         # fake-ip地址池
   fake-ip-filter-mode: blacklist                                         # 黑白名单
   fake-ip-filter: [
-    "rule-set:直连顶级域名,直连域名",
+    "rule-set:直连域名",
     "+.services.googleapis.cn",
     "+.xn--ngstr-lra8j.com",
     "time.*.com",
@@ -94,9 +94,29 @@ dns:
     "+.ntp.ntsc.ac.cn",
     "+.cn.ntp.org.cn"
   ]
-  default-nameserver: [223.5.5.5]
-  proxy-server-nameserver: ["https://dns.alidns.com/dns-query"]
-  nameserver: [223.5.5.5, 119.29.29.29]                                # 尽量使用运营商的DNS
+
+
+# 基础DNS服务器，必须先有它才能使用域名类型的DNS配置，因此必须为IP，此处使用阿里云DNS
+  default-nameserver:      
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+
+# 在访问的国外网站没有匹配到任何域名规则，最终走了MATCH兜底规则时使用的DNS，为了确保不发生DNS泄漏和DNS污染，必须使用国外DNS
+# 说人话就是上面开启了遵循路由规则，DNS请求会匹配自己写的规则，没匹配到的会用这个DNS，所以写国外的防止DNS泄露
+# 没开启遵循路由规则的话，这个可以填写国内DNS，因为没开启遵循路由规则所有DNS都会通过这个解析
+  nameserver:         
+    - https://cloudflare-dns.com/dns-query
+    - https://dns.google/dns-query
+
+# 解析代理节点时使用的DNS，为了使下面的respect-rules生效必须设置，最好设置为国内DNS，否则在代理的第一步就可能因为连接不上国外DNS而解析不出代理节点的IP，最终倒在起点
+  proxy-server-nameserver:         
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+
+# 规则匹配到直连时使用的DNS，既然是可以直连的，当然要用国内DNS    
+  direct-nameserver:           
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
 
 # 出站策略
 #我自己用的节点比较多，所以首选的都是负载均衡，有需要可以自己改一下顺序。
