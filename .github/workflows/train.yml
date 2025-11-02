@@ -9,7 +9,6 @@ on:
       - '.github/workflows/train_and_deploy.yml'
       
   schedule:
-    # 每天北京时间 08:00 运行 (对应 UTC 00:00)
     - cron: '0 0 * * *'
   
   workflow_dispatch:
@@ -27,98 +26,155 @@ jobs:
       REMOTE: ${{ secrets.REMOTE }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
-
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        # 路径修正: Smart/scripts/requirements.txt
-        pip install -r Smart/scripts/requirements.txt 
-    
-    - name: Set up rclone config
-      run: |
-        echo "$RCLONE_CONFIG_B64" | base64 -d > rclone.conf
-
-    - name: Download and Install rclone
-      run: |
-        curl -Of https://downloads.rclone.org/rclone-current-linux-amd64.zip
-        unzip rclone-current-linux-amd64.zip
-        RCLONE_DIR=$(find . -maxdepth 1 -type d -name "rclone-v*-linux-amd64")
-        sudo mv "$RCLONE_DIR"/rclone /usr/bin/rclone
-        rclone version
-
-    - name: Pull CSV from Google Drive
-      run: |
-        rclone copy "$REMOTE" ./data --config rclone.conf --transfers=4 --checkers=8 --log-level=INFO
+      - name: Checkout repository
+        uses: actions/checkout@v4
         
-    - name: Check for CSV data files
-      run: |
-        if [ ! -d ./data ] || [ -z "$(ls -A ./data)" ]; then
-          echo "::error::Data directory is empty or not found. Cannot proceed with training."
-          exit 1
-        fi
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-    - name: Run model training script
-      run: python train_smart.py
-      working-directory: Smart/scripts/
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # 路径修正: Smart/scripts/requirements.txt
+          pip install -r Smart/scripts/requirements.txt
       
-    - name: Upload model artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: model-artifact
-        path: models/Model.bin
+      - name: Set up rclone config
+        run: |
+          echo "$RCLONE_CONFIG_B64" | base64 -d > rclone.conf
+
+      - name: Download and Install rclone
+        run: |
+          curl -Of https://downloads.rclone.org/rclone-current-linux-amd64.zip
+          unzip rclone-current-linux-amd64.zip
+          RCLONE_DIR=$(find . -maxdepth 1 -type d -name "rclone-v*-linux-amd64")
+          sudo mv "$RCLONE_DIR"/rclone /usr/bin/rclone
+          rclone version
+
+      - name: Pull CSV from Google Drive
+        run: |
+          rclone copy "$REMOTE" ./data --config rclone.conf --transfers=4 --checkers=8 --log-level=INFO
+          
+      - name: Check for CSV data files
+        run: |
+          if [ ! -d ./data ] || [ -z "$(ls -A ./data)" ]; then
+            echo "::error::Data directory is empty or not found. Cannot proceed with training."
+            exit 1
+          fi
+
+      - name: Run model training script
+        run: python train_smart.py
+        working-directory: Smart/scripts/
         
-    - name: Clean up temporary files
-      run: |
-        rm -rf ./data
-        rm rclone.conf
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifact
+          path: models/Model.bin
+          
+      - name: Clean up temporary files
+        run: |
+          rm -rf ./data
+          rm rclone.conf
           
   deploy_release:
     needs: train
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    
+    if: always() 
     env:
       LATEST_TAG: smart-model
-
+    
     steps:
+      - name: Notify Telegram on Start
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            <b>🤖 GitHub Actions 启动通知</b>
+            🚀 模型部署任务已启动。
+            Run ID: ${{ github.run_id }}
+            Commit: ${{ github.sha }}
+          format: html
+          disable_web_page_preview: true
+          
       - name: Checkout repository for Tagging
+        if: success()
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
-        
+          fetch-depth: 0
+          
       - name: Download Model Artifact
+        if: success()
         uses: actions/download-artifact@v4
         with:
           name: model-artifact
-          path: models/ 
+          path: models/
 
+      - name: Delete Existing Release
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete "${{ env.LATEST_TAG }}" --yes 2>/dev/null || true
+          echo "Checked and deleted old release if it existed."
+          
       - name: Configure Git for Tag Update
+        if: success()
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
       - name: Overwrite Latest Tag
+        if: success()
         run: |
           git push --delete origin "$LATEST_TAG" 2>/dev/null || true 
           git tag -f "$LATEST_TAG"
           git push origin "$LATEST_TAG"
 
-      - name: Create or Update Permanent Release
+      - name: Create New Permanent Release
+        id: create_release
+        if: success()
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.LATEST_TAG }}
           name: Smart Model
-          overwrite: true
           files: models/Model.bin
           body: |
             ✨ Permanent Model Link Updated.
             - Model Source Commit: ${{ github.sha }}
             - Training Run ID: ${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Telegram on Success
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            <b>🎉 模型发布成功！</b>
+            🔗 GitHub Release 已更新至最新时间。
+            ✅ OpenClash 客户端将在下次检查时拉取。
+            查看 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.LATEST_TAG }}
+          format: html
+          disable_web_page_preview: true
+
+
+      - name: Notify Telegram on Failure
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TG_CHAT_ID }}
+          token: ${{ secrets.TG_BOT_TOKEN }}
+          message: |
+            <b>🚨 模型部署失败！</b>
+            ❌ 任务运行过程中发生错误。
+            请检查日志: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          format: html
+          disable_web_page_preview: true
