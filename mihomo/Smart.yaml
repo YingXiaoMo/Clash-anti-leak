@@ -16,7 +16,7 @@ proxy-providers:
 
 # 节点信息
 proxies:
-  - {name: 🎯 全球直连, type: direct}	
+  - {name: 🎯 全球直连, type: direct,udp: true}
   
   
   
