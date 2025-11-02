@@ -16,7 +16,7 @@ proxy-providers:
 
 # 节点信息
 proxies:
-  - {name: 🎯 全球直连, type: direct}	
+  - {name: 🎯 全球直连, type: direct,udp: true}
   
   
   
@@ -49,21 +49,21 @@ sniffer:
   enable: true
   sniff: {HTTP: {ports: [80, "8080-8880"], override-destination: true}, TLS: {ports: [443, 8443]}, QUIC: {ports: [443, 8443]}}
   force-domain: ["+.v2ex.com"]
-  skip-domain: [
-    "rule-set:直连顶级域名,直连域名",
-    "dlg.io.mi.com",
-    "+.push.apple.com",
-    "+.apple.com",
-    "+.wechat.com",
-    "+.qpic.cn",
-    "+.qq.com",
-    "+.wechatapp.com",
-    "+.vivox.com",
-    "+.oray.com",
-    "+.sunlogin.net",
-    "+.msftconnecttest.com",
-    "+.msftncsi.com"
-  ]
+  skip-domain:
+    - "geosite:cn"
+    - "rule-set:fakeip过滤,私有域名,直连域名"
+    - "dlg.io.mi.com"
+    - "+.push.apple.com"
+    - "+.apple.com"
+    - "+.wechat.com"
+    - "+.qpic.cn"
+    - "+.qq.com"
+    - "+.wechatapp.com"
+    - "+.vivox.com"
+    - "+.oray.com"
+    - "+.sunlogin.net"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
 
 # 入站
 tun:
@@ -83,17 +83,17 @@ dns:
   enhanced-mode: fake-ip                                                 # 模式选择
   fake-ip-range: "198.18.0.1/16"                                         # fake-ip地址池
   fake-ip-filter-mode: blacklist                                         # 黑白名单
-  fake-ip-filter: [
-    "rule-set:直连域名",
-    "+.services.googleapis.cn",
-    "+.xn--ngstr-lra8j.com",
-    "time.*.com",
-    "+.pool.ntp.org",
-    "+.ntp.tencent.com",
-    "+.ntp1.aliyun.com",
-    "+.ntp.ntsc.ac.cn",
-    "+.cn.ntp.org.cn"
-  ]
+  fake-ip-filter:
+    - "geosite:cn"
+    - "rule-set:fakeip过滤,私有域名,直连域名"
+    - "+.services.googleapis.cn"
+    - "+.xn--ngstr-lra8j.com"
+    - "time.*.com"
+    - "+.pool.ntp.org"
+    - "+.ntp.tencent.com"
+    - "+.ntp1.aliyun.com"
+    - "+.ntp.ntsc.ac.cn"
+    - "+.cn.ntp.org.cn"
 
 
 # 基础DNS服务器，必须先有它才能使用域名类型的DNS配置，因此必须为IP，此处使用阿里云DNS
@@ -101,6 +101,25 @@ dns:
     - tls://223.5.5.5
     - tls://223.6.6.6
 
+# 规则匹配到直连时使用的DNS，既然是可以直连的，当然要用国内DNS    
+#  direct-nameserver:           
+#    - https://dns.alidns.com/dns-query
+#    - https://doh.pub/dns-query
+
+# 解析代理节点时使用的DNS，为了使下面的respect-rules生效必须设置，最好设置为国内DNS，否则在代理的第一步就可能因为连接不上国外DNS而解析不出代理节点的IP，最终倒在起点
+  proxy-server-nameserver:         
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+
+# 强制指定策略组使用固定的dns解析，和上面那个匹配直连冲突，选择一个使用，我把直连注释了，因为使用直连那个会并发查询dns，导致国外dns返回快的话会使用国外地址访问国内的网站
+  nameserver-policy:
+    geosite:cn:
+       - https://dns.alidns.com/dns-query
+       - https://doh.pub/dns-query
+    rule-set:fakeip过滤,自用直连,直连域名,私有域名:
+       - https://dns.alidns.com/dns-query
+       - https://doh.pub/dns-query
+        
 # 在访问的国外网站没有匹配到任何域名规则，最终走了MATCH兜底规则时使用的DNS，为了确保不发生DNS泄漏和DNS污染，必须使用国外DNS
 # 说人话就是上面开启了遵循路由规则，DNS请求会匹配自己写的规则，没匹配到的会用这个DNS，所以写国外的防止DNS泄露
 # 没开启遵循路由规则的话，这个可以填写国内DNS，因为没开启遵循路由规则所有DNS都会通过这个解析
@@ -108,16 +127,8 @@ dns:
     - https://cloudflare-dns.com/dns-query
     - https://dns.google/dns-query
 
-# 解析代理节点时使用的DNS，为了使下面的respect-rules生效必须设置，最好设置为国内DNS，否则在代理的第一步就可能因为连接不上国外DNS而解析不出代理节点的IP，最终倒在起点
-  proxy-server-nameserver:         
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
 
-# 规则匹配到直连时使用的DNS，既然是可以直连的，当然要用国内DNS    
-  direct-nameserver:           
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-
+    
 # 出站策略
 #我自己用的节点比较多，所以首选的都是负载均衡，有需要可以自己改一下顺序。
 # 注意锚点必须放在引用的上方，可以集中把锚点全部放yaml的顶部。
@@ -131,6 +142,12 @@ proxy-groups:
   - {name: 🌪 GitHub, <<: *all} 
   - {name: 📲 电报消息,  <<: *all} 
   - {name: 🤖 AI服务,  <<: *all} 
+  - {name: 🤖 ChatGPT,  <<: *all} 
+  - {name: 🤖 Claude,  <<: *all} 
+  - {name: 🤖 Meta AI,  <<: *all} 
+  - {name: 🤖 Perplexity,  <<: *all} 
+  - {name: 🤖 Gemini,  <<: *all} 
+  - {name: 🤖 Copilot,  <<: *all} 
   - {name: 📹 油管视频,  <<: *all} 
   - {name: 🇬 谷歌服务, <<: *all} 
   - {name: 📢 谷歌FCM,  <<: *all}
@@ -180,30 +197,39 @@ proxy-groups:
 
 # 规则匹配
 rules:
+#  - RULE-SET,广告 ,🛑 广告过滤                                  ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
   - RULE-SET,私有域名 ,🎯 全球直连
   - RULE-SET,直连软件,🎯 全球直连
+  - RULE-SET,Steam下载,🎯 全球直连
+  - RULE-SET,Steam,🎮 游戏平台
+  - RULE-SET,Epic,🎮 游戏平台
+  - RULE-SET,EA,🎮 游戏平台
   - RULE-SET,游戏平台,🎮 游戏平台
   - RULE-SET,steam社区,🎮 steam社区
-#  - RULE-SET,广告 ,🛑 广告过滤                                  ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
   - RULE-SET,BT下载,🎯 全球直连
   - RULE-SET,电报域名,📲 电报消息
   - RULE-SET,GitHub,🌪 GitHub
   - RULE-SET,油管视频,📹 油管视频
   - RULE-SET,谷歌FCM,📢 谷歌FCM
-  - RULE-SET,谷歌域名,🇬 谷歌服务
   - RULE-SET,谷歌cn,🎯 全球直连
+  - RULE-SET,谷歌域名,🇬 谷歌服务
+  - RULE-SET,ChatGPT,🤖 ChatGPT
+  - RULE-SET,Claude,🤖 Claude
+  - RULE-SET,Meta AI,🤖 Meta AI
+  - RULE-SET,Perplexity,🤖 Perplexity
+  - RULE-SET,Gemini,🤖 Gemini
+  - RULE-SET,Copilot,🤖 Copilot
+  - RULE-SET,AI服务,🤖 AI服务
   - RULE-SET,微软云盘,🪟 微软云盘
   - RULE-SET,微软服务,🪟 微软服务
   - RULE-SET,苹果服务,🍎 苹果服务
-  - RULE-SET,AI服务,🤖 AI服务
   - RULE-SET,网络测试,📈 网络测试
   - RULE-SET,代理顶级域名,🧱 代理域名
   - RULE-SET,代理域名,🧱 代理域名
-  - RULE-SET,直连顶级域名,🎯 全球直连
   - RULE-SET,直连域名,🎯 全球直连
   - RULE-SET,私有ip ,🎯 全球直连
   - RULE-SET,国内ip,🎯 全球直连
-  - RULE-SET,电报消息,📲 电报消息,no-resolve
+  - RULE-SET,电报ip,📲 电报消息,no-resolve
   - RULE-SET,谷歌ip,🇬 谷歌服务,no-resolve
 
   - MATCH,🐟 漏网之鱼
@@ -216,6 +242,10 @@ rule-anchor:
 rule-providers: 
   fakeip过滤: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs"}  
   steam社区: { <<: *class, url: "https://raw.githubusercontent.com/YingXiaoMo/Mihomo-Personal-Rules/refs/heads/main/Self-use-rules/steamCommunity.list"} 
+  Steam下载: { <<: *class, url: "https://raw.githubusercontent.com/YingXiaoMo/Mihomo-Personal-Rules/refs/heads/main/Self-use-rules/steamdownload.list"} 
+  Steam: {<<: *domain, url: "https://gh-proxy.com/github.com/metacubex/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"}
+  Epic: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Epic/Epic.list"}
+  EA: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EA/EA.list"}
   游戏平台: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/games-cn.mrs"} 
   私有域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.mrs"} 
   BT下载: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/trackerslist.mrs"} 
@@ -225,6 +255,12 @@ rule-providers:
   苹果服务: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/apple-cn.mrs"} 
   谷歌cn: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/google-cn.mrs"} 
   油管视频: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/youtube.mrs"} 
+  ChatGPT: {<<: *domain, url: "https://gh-proxy.com/github.com/metacubex/meta-rules-dat/raw/refs/heads/meta/geo/geosite/openai.mrs"}
+  Claude: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Claude/Claude.list"}
+  Meta AI: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/liandu2024/clash/refs/heads/main/list/MetaAi.list"}
+  Perplexity: {<<: *domain, url: "https://gh-proxy.com/github.com/metacubex/meta-rules-dat/raw/refs/heads/meta/geo/geosite/perplexity.mrs"}
+  Copilot: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/liandu2024/clash/refs/heads/main/list/Copilot.list"}
+  Gemini: {<<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/liandu2024/clash/refs/heads/main/list/Gemini.list"}
   AI服务: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ai.mrs"} 
   网络测试: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"} 
   GitHub: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"} 
@@ -233,10 +269,9 @@ rule-providers:
   电报域名: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"} 
   代理顶级域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/tld-proxy.mrs"} 
   代理域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/proxy.mrs"} 
-  直连顶级域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/tld-cn.mrs"} 
   直连域名: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cn.mrs"} 
   私有ip: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/privateip.mrs"} 
   国内ip: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cnip.mrs"} 
   谷歌ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"} 
-  电报消息: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/telegramip.mrs"} 
+  电报ip: { <<: *ip, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/telegramip.mrs"} 
 #  广告: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ads.mrs"}                             ##广告我注释了，开启过滤会影响访问速度，并且也没什么用。
