@@ -9,7 +9,7 @@ on:
       - '.github/workflows/train_and_deploy.yml'
       
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '22 30 * * *'
   
   workflow_dispatch:
 
