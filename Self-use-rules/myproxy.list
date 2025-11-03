@@ -1,12 +1,12 @@
 
 
-+.azureedge.net
-+.uaa.com
-+.hanime1.me
-+.huafei888.site
+DOMAIN-SUFFIX,azureedge.net
+DOMAIN-SUFFIX,uaa.com
+DOMAIN-SUFFIX,hanime1.me
+DOMAIN-SUFFIX,huafei888.site
 
 
 
-hub.docker.com
-services.googleapis.cn
-xn--ngstr-lra8j.com
+DOMAIN-,hub.docker.com
+DOMAIN-,services.googleapis.cn
+DOMAIN-,xn--ngstr-lra8j.com
