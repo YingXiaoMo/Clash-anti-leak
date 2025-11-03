@@ -1,5 +1,6 @@
-
-
+DOMAIN-,hub.docker.com
+DOMAIN-,services.googleapis.cn
+DOMAIN-,xn--ngstr-lra8j.com
 DOMAIN-SUFFIX,azureedge.net
 DOMAIN-SUFFIX,uaa.com
 DOMAIN-SUFFIX,hanime1.me
@@ -7,6 +8,4 @@ DOMAIN-SUFFIX,huafei888.site
 
 
 
-DOMAIN-,hub.docker.com
-DOMAIN-,services.googleapis.cn
-DOMAIN-,xn--ngstr-lra8j.com
+
