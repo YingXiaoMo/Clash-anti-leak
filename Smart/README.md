@@ -74,55 +74,57 @@
 
 ---
 
-## 🚀 关键步骤详解：数据下载配置示例（GCS/rclone）
-
+🚀 关键步骤详解：数据下载配置示例（GCS / Rclone）  
 由于数据需要从外部云存储下载，您需要在 `train_and_deploy.yml` 的 `train` Job 中添加相应的下载步骤。
+
+---
 
 ### 选项 A：使用 Google Cloud Storage (GCS)
 
-#### 1. 准备 Secret：Google 服务账户密钥
-
+1. 准备 Secret：Google 服务账户密钥  
 您必须在 GitHub Secrets 中配置一个用于认证 Google 服务的 Secret。
 
-* **Secret 名称：** `GCP_SA_KEY`
-* **Secret 内容：** 您的 Google 服务账户密钥 JSON 文件内容。
-    * *注意：此密钥必须拥有访问您 GCS 存储桶中数据的权限。*
+- **Secret 名称：** `GCP_SA_KEY`  
+- **Secret 内容：** 您的 Google 服务账户密钥 JSON 文件内容。  
+  > 注意：此密钥必须拥有访问您 GCS 存储桶中数据的权限。
 
-#### 2. YAML 示例（在 `train_and_deploy.yml` 的 `train` Job 中添加）
-
-请在工作流文件中的 `steps:` 列表里，紧跟在 `actions/checkout` 步骤之后，添加如下步骤：
+2. YAML 示例（在 `train_and_deploy.yml` 的 `train` Job 中添加）  
+请在 `steps:` 列表里，紧跟在 `actions/checkout` 步骤之后，添加如下步骤：
 
 ```yaml
-      # 1. 认证 Google Cloud (使用服务账户密钥 JSON)
-      - name: 认证 Google Cloud
-        uses: google-github-actions/auth@v2 
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+# 1. 认证 Google Cloud (使用服务账户密钥 JSON)
+- name: 认证 Google Cloud
+  uses: google-github-actions/auth@v2 
+  with:
+    credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 2. 从 Google Cloud Storage 下载历史数据
-      - name: 从 Google Cloud Storage 下载历史数据 (gsutil)
-        run: |
-          echo "创建数据目录..."
-          mkdir -p data
-          
-          # 🚨 替换 gs://your-gcs-bucket-name/smart_data/ 为您的 GCS 实际路径
-          # *号用于匹配所有 CSV 文件
-          gsutil cp gs://your-gcs-bucket-name/smart_data/*.csv ./data/
-          
-          echo "数据下载完成！"
+# 2. 从 Google Cloud Storage 下载历史数据
+- name: 从 Google Cloud Storage 下载历史数据 (gsutil)
+  run: |
+    echo "创建数据目录..."
+    mkdir -p data
+    
+    # 🚨 替换 gs://your-gcs-bucket-name/smart_data/ 为您的 GCS 实际路径
+    # *号用于匹配所有 CSV 文件
+    gsutil cp gs://your-gcs-bucket-name/smart_data/*.csv ./data/
+    
+    echo "数据下载完成！"
+```
 
-### 选项 B：使用 Rclone (适用于 Google Drive/OneDrive/其他云存储)
+---
 
-rclone 是一款命令行云存储同步工具，支持多种云服务。
+### 选项 B：使用 Rclone (适用于 Google Drive / OneDrive / 其他云存储)
+
+`rclone` 是一款命令行云存储同步工具，支持多种云服务。
 
 1. 准备 Secret：Rclone 配置文件  
-您需要先在本地配置好 rclone (例如配置 Google Drive 或其他远程)，然后将生成的 rclone.conf 文件内容作为 Secret 存储。
+您需要先在本地配置好 rclone（例如配置 Google Drive 或其他远程），然后将生成的 `rclone.conf` 文件内容作为 Secret 存储。
 
-Secret 名称：RCLONE_CONFIG  
-Secret 内容：您的 rclone.conf 文件中 除了 [remote_name] 之外的所有配置内容。
+- **Secret 名称：** `RCLONE_CONFIG`  
+- **Secret 内容：** 您的 `rclone.conf` 文件中 **除了 `[remote_name]` 之外的所有配置内容**。
 
-2. YAML 示例（在 train_and_deploy.yml 的 train Job 中添加）  
-请在工作流文件中的 steps: 列表里，紧跟在 actions/checkout 步骤之后，添加如下步骤：
+2. YAML 示例（在 `train_and_deploy.yml` 的 `train` Job 中添加）  
+请在 `steps:` 列表里，紧跟在 `actions/checkout` 步骤之后，添加如下步骤：
 
 ```yaml
 # 1. 安装 rclone 工具
@@ -135,9 +137,7 @@ Secret 内容：您的 rclone.conf 文件中 除了 [remote_name] 之外的所�
     echo "创建数据目录..."
     mkdir -p data
     
-    # 将 Secret 内容写入 rclone.conf
     # 🚨 替换 [gdrive_remote_name] 为您在 rclone 中设置的远程名称
-    # ⚠️ 注意：这里假设您的 rclone.conf 只有一个远程配置
     mkdir -p ~/.config/rclone
     echo "[gdrive_remote_name]" > ~/.config/rclone/rclone.conf
     echo "${{ secrets.RCLONE_CONFIG }}" >> ~/.config/rclone/rclone.conf
@@ -146,13 +146,12 @@ Secret 内容：您的 rclone.conf 文件中 除了 [remote_name] 之外的所�
 - name: 从云存储下载历史数据 (rclone)
   run: |
     # 🚨 替换 gdrive_remote_name:path/to/data 为您的实际远程名称和路径
-    # 使用 'copy' 或 'sync' 命令将数据下载到 ./data/ 目录
     rclone copy gdrive_remote_name:path/to/data ./data/ --include "*.csv"
     echo "数据下载完成！"
 ```
 
-重要说明：  
-在 rclone 示例中，务必将 [gdrive_remote_name]、gdrive_remote_name:path/to/data 替换为您的实际远程名称和路径。  
+> 重要说明：  
+> 在 Rclone 示例中，务必将 `[gdrive_remote_name]` 和 `gdrive_remote_name:path/to/data` 替换为您的实际远程名称和路径。  
+> `~/.config/rclone/` 目录在 Runner 中默认可能不存在，但在 rclone 运行时会自动创建。
 
-~/.config/rclone/ 目录在 Runner 中默认可能不存在，但在 rclone 运行时会自动创建。
 
