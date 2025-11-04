@@ -41,10 +41,6 @@ jobs:
           # 步骤 1: 安装 requirements.txt 中已有的依赖 (例如 LightGBM, pandas)
           # 路径修正: Smart/scripts/requirements.txt
           pip install -r Smart/scripts/requirements.txt
-          
-          # ⚡ 关键：安装 V3 二进制编码库，修正包名为 'smartstore-creator'
-          # 这是解决 Mihomo 'only version=v3 is supported' 错误的根本
-          pip install smartstore-creator
       
       - name: Set up rclone config
         run: |
