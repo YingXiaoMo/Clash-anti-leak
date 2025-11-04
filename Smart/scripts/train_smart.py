@@ -7,6 +7,7 @@
 
 import re
 import os 
+import glob # ⚡ 新增: 用于查找目录下的所有匹配文件
 import pandas as pd
 import numpy as np
 import lightgbm as lgb
@@ -113,9 +114,13 @@ class GoTransformParser:
 # 2. 系统配置参数
 # ==============================================================================
 
-GO_FILE = os.path.join(BASE_DIR, "../go_transform/transform.go")
-MODEL_FILE = os.path.join(BASE_DIR, "../../models/Model.bin")
-DATA_DIR = os.path.join(BASE_DIR, "../../data") 
+# 必须先定义 BASE_DIR 才能在 os.path.join 中使用它
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 文件路径配置 (使用 BASE_DIR 确保路径可靠性)
+DATA_DIR = os.path.join(BASE_DIR, '../../data')   # ⚡ 修正: 训练数据**目录**路径
+GO_FILE = os.path.join(BASE_DIR, '../go_transform/transform.go')         # Go 源码文件路径
+MODEL_FILE = os.path.join(BASE_DIR, '../../models/Model.bin')         # 输出模型文件路径
 
 # 特征预处理配置
 # StandardScaler 适用于正态分布或近似正态分布的特征
@@ -148,24 +153,21 @@ EARLY_STOPPING_ROUNDS = 100           # 早停轮数，防止过拟合
 
 def load_and_clean_data(file_path: str) -> Optional[pd.DataFrame]:
     """
-    数据加载与预处理
+    单文件数据加载与预处理
     
     执行数据质量控制流程，包括格式验证、缺失值处理和异常值过滤。
-    数据清洗过程类似于实验室的样品预处理，确保输入数据的质量。
     
     Args:
-        file_path: 数据文件路径
+        file_path: 单个数据文件路径
         
     Returns:
         清洗后的 DataFrame，失败时返回None
     """
-    print(f"开始加载数据文件: {file_path}")
+    print(f"尝试加载文件: {os.path.basename(file_path)}...")
     
     try:
         # 使用容错模式读取CSV文件，自动跳过格式异常的行
-        # on_bad_lines='skip'参数类似于质量检验中的不良品剔除机制
         data = pd.read_csv(file_path, on_bad_lines='skip')
-        print(f"数据加载完成，原始记录数: {len(data)}")
     except FileNotFoundError:
         print(f"错误: 数据文件 '{file_path}' 不存在")
         return None
@@ -173,20 +175,57 @@ def load_and_clean_data(file_path: str) -> Optional[pd.DataFrame]:
         print(f"数据加载失败: {e}")
         return None
 
-    # 数据质量控制流程
     original_count = len(data)
     
-    # 移除权重字段缺失的记录
+    # 数据质量控制流程
     data.dropna(subset=['weight'], inplace=True)
-    
-    # 过滤非正权重值（权重必须为正数才有实际意义）
     data = data[data['weight'] > 0].copy()
     
     final_count = len(data)
     filtered_count = original_count - final_count
     
-    print(f"数据清洗完成: {original_count} → {final_count} 条记录 (过滤 {filtered_count} 条)")
+    print(f"文件处理完成: {original_count} → {final_count} 条记录 (过滤 {filtered_count} 条)")
     return data
+
+def load_all_data_from_directory(data_dir: str) -> Optional[pd.DataFrame]:
+    """
+    从指定目录加载所有 CSV 数据文件，并进行合并和清洗。
+    
+    Args:
+        data_dir: 包含 CSV 文件的目录路径
+        
+    Returns:
+        合并和清洗后的总 DataFrame，失败时返回None
+    """
+    print(f"开始从数据目录加载所有 CSV 文件: {data_dir}")
+    # 使用 glob 查找目录下所有 .csv 文件
+    all_files = glob.glob(os.path.join(data_dir, '*.csv'))
+    
+    if not all_files:
+        print(f"错误: 在目录 '{data_dir}' 中未找到任何 .csv 文件。")
+        return None
+    
+    print(f"--- 找到 {len(all_files)} 个数据文件 ---")
+    
+    list_of_df = []
+    
+    for i, file_path in enumerate(all_files):
+        # 调用单文件加载函数进行处理
+        df = load_and_clean_data(file_path)
+        if df is not None and not df.empty:
+            list_of_df.append(df)
+        
+    if not list_of_df:
+        print("所有文件加载或清洗后均为空，训练无法进行。")
+        return None
+
+    # 合并所有数据框
+    print("\n合并所有数据文件...")
+    combined_data = pd.concat(list_of_df, ignore_index=True)
+    print(f"数据合并完成，总记录数: {len(combined_data)}")
+    
+    return combined_data
+
 
 def extract_features_from_preprocessed(data: pd.DataFrame, feature_order: List[str]) -> Optional[Tuple[pd.DataFrame, pd.Series]]:
     """
@@ -347,9 +386,9 @@ def main() -> None:
         print("程序终止")
         return
     
-    # 步骤2: 数据加载与清洗
+    # 步骤2: 数据加载与清洗 (⚡ 现已加载所有文件)
     print("\n[步骤2] 数据加载与清洗")
-    dataset = load_and_clean_data(DATA_FILE)
+    dataset = load_all_data_from_directory(DATA_DIR)
     if dataset is None:
         print("数据加载失败，程序终止")
         return
@@ -371,8 +410,8 @@ def main() -> None:
     print("\n[步骤5] 训练测试集划分")
     X_train, X_test, y_train, y_test = train_test_split(
         X_processed, y, 
-        test_size=0.2,      # 80/20 划分比例
-        random_state=42     # 确保结果可复现
+        test_size=0.2,       # 80/20 划分比例
+        random_state=42      # 确保结果可复现
     )
     print(f"数据划分完成 - 训练集: {X_train.shape}, 测试集: {X_test.shape}")
     
