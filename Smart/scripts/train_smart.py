@@ -6,14 +6,9 @@
 
 
 
-
-
-
-
-
 import re
-import os 
-import glob 
+import os
+import glob
 import pandas as pd
 import numpy as np
 import lightgbm as lgb
@@ -21,9 +16,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, RobustScaler
 from typing import Tuple, List, Optional
 
-
-
 class GoTransformParser:
+    
     def __init__(self, go_file_path: str):
         try:
             with open(go_file_path, 'r', encoding='utf-8') as f:
@@ -31,7 +25,7 @@ class GoTransformParser:
             print(f"成功加载 Go 源文件: {go_file_path}")
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"Go 源文件 '{go_file_path}' 没找到。请确保文件存在于当前工作目录中。"
+                f"Go 源文件 '{go_file_path}' 没找到。请确保文件存在于正确路径中。"
             )
         
         self.feature_order = self._parse_feature_order()
@@ -71,13 +65,15 @@ class GoTransformParser:
             'ip_hash', 'geoip_hash'
         ]
 
-
+# ==============================================================================
+# 2. 系统配置参数
+# ==============================================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DATA_DIR = os.path.join(BASE_DIR, '../../data')
-GO_FILE = os.path.join(BASE_DIR, '../go_transform/transform.go')
-MODEL_FILE = os.path.join(BASE_DIR, '../../models/Model.bin')
+GO_FILE = os.path.join(BASE_DIR, "../go_transform/transform.go")
+MODEL_FILE = os.path.join(BASE_DIR, "../../models/Model.bin")
+DATA_DIR = os.path.join(BASE_DIR, "../../data") 
 
 STD_SCALER_FEATURES = [
     'connect_time', 'latency', 'upload_mb', 'download_mb', 'duration_minutes', 
@@ -97,16 +93,29 @@ LGBM_PARAMS = {
 
 EARLY_STOPPING_ROUNDS = 100
 
-
+# ==============================================================================
+# 3. 核心功能模块
+# ==============================================================================
 
 def load_and_clean_data(file_path: str) -> Optional[pd.DataFrame]:
     print(f"尝试加载文件: {os.path.basename(file_path)}...")
     
     try:
         data = pd.read_csv(file_path, on_bad_lines='skip')
-    except FileNotFoundError:
-        print(f"错误: 数据文件 '{file_path}' 不存在")
-        return None
+    except UnicodeDecodeError:
+        try:
+            data = pd.read_csv(file_path, on_bad_lines='skip', encoding='gbk')
+            print(f"警告: 文件 '{os.path.basename(file_path)}' 使用 GBK 编码成功加载。")
+        except UnicodeDecodeError:
+            try:
+                data = pd.read_csv(file_path, on_bad_lines='skip', encoding='latin-1')
+                print(f"警告: 文件 '{os.path.basename(file_path)}' 使用 latin-1 编码成功加载。")
+            except Exception as e:
+                print(f"数据加载失败 (多种编码尝试后仍失败): {e}")
+                return None
+        except Exception as e:
+            print(f"数据加载失败 (尝试 GBK 编码后仍失败): {e}")
+            return None
     except Exception as e:
         print(f"数据加载失败: {e}")
         return None
@@ -114,6 +123,7 @@ def load_and_clean_data(file_path: str) -> Optional[pd.DataFrame]:
     original_count = len(data)
     
     data.dropna(subset=['weight'], inplace=True)
+    
     data = data[data['weight'] > 0].copy()
     
     final_count = len(data)
@@ -124,31 +134,29 @@ def load_and_clean_data(file_path: str) -> Optional[pd.DataFrame]:
 
 def load_all_data_from_directory(data_dir: str) -> Optional[pd.DataFrame]:
     print(f"开始从数据目录加载所有 CSV 文件: {data_dir}")
-    all_files = glob.glob(os.path.join(data_dir, '*.csv'))
+    csv_files = glob.glob(os.path.join(data_dir, '*.csv'))
     
-    if not all_files:
-        print(f"错误: 在目录 '{data_dir}' 中未找到任何 .csv 文件。")
+    if not csv_files:
+        print("错误: 在指定目录中没有找到任何 CSV 文件。")
         return None
     
-    print(f"--- 找到 {len(all_files)} 个数据文件 ---")
+    print(f"--- 找到 {len(csv_files)} 个数据文件 ---")
     
-    list_of_df = []
+    all_data = []
     
-    for i, file_path in enumerate(all_files):
+    for file_path in csv_files:
         df = load_and_clean_data(file_path)
-        if df is not None and not df.empty:
-            list_of_df.append(df)
-        
-    if not list_of_df:
-        print("所有文件加载或清洗后均为空，训练无法进行。")
+        if df is not None:
+            all_data.append(df)
+            
+    if not all_data:
+        print("错误: 所有数据文件加载或清洗失败，无法继续训练。")
         return None
-
+        
     print("\n合并所有数据文件...")
-    combined_data = pd.concat(list_of_df, ignore_index=True)
+    combined_data = pd.concat(all_data, ignore_index=True)
     print(f"数据合并完成，总记录数: {len(combined_data)}")
-    
     return combined_data
-
 
 def extract_features_from_preprocessed(data: pd.DataFrame, feature_order: List[str]) -> Optional[Tuple[pd.DataFrame, pd.Series]]:
     print("开始构建特征矩阵和目标变量...")
@@ -216,22 +224,25 @@ def train_lgbm_model(X_train: pd.DataFrame, y_train: pd.Series, X_test: pd.DataF
 def save_model(model: lgb.LGBMRegressor, model_file: str) -> None:
     print(f"开始保存模型至: {model_file}")
     
+    output_dir = os.path.dirname(model_file)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"目标目录已创建: {output_dir}")
+    
     try:
-        output_dir = os.path.dirname(model_file)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir, exist_ok=True)
-            print(f"目标目录已创建: {output_dir}")
-
         model.booster_.save_model(model_file)
         print("模型保存成功，可以直接部署")
     except Exception as e:
         print(f"模型保存失败: {e}")
 
-
+# ==============================================================================
+# 4. 主程序流程控制
+# ==============================================================================
 
 def main() -> None:
     print("=" * 60)
     print("Mihomo 智能权重模型训练")
+    print("出品：安格视界")
     print("=" * 60)
     
     print("\n[步骤1] Go 源码解析")
@@ -280,6 +291,10 @@ def main() -> None:
     print(f"输出文件: {MODEL_FILE}")
     print("模型可进行生产环境部署")
     print("=" * 60)
+
+# ==============================================================================
+# 程序入口点
+# ==============================================================================
 
 if __name__ == "__main__":
     main()
