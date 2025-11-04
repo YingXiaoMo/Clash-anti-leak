@@ -37,9 +37,6 @@ jobs:
       - name: Install Python dependencies (V3 Library Added)
         run: |
           python -m pip install --upgrade pip
-          
-          # 步骤 1: 安装 requirements.txt 中已有的依赖 (例如 LightGBM, pandas)
-          # 路径修正: Smart/scripts/requirements.txt
           pip install -r Smart/scripts/requirements.txt
       
       - name: Set up rclone config
@@ -66,7 +63,6 @@ jobs:
           fi
 
       - name: Run model training script
-        # 脚本名称已根据您的反馈修正为 train_smart.py
         run: python train_smart.py 
         working-directory: Smart/scripts/
         
