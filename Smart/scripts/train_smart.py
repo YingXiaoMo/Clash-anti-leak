@@ -353,6 +353,12 @@ def save_model(model: lgb.LGBMRegressor, model_file: str) -> None:
     print(f"开始保存模型至: {model_file}")
     
     try:
+        # ⚡ 修正: 确保目标目录存在。如果目录不存在，使用 os.makedirs 递归创建。
+        output_dir = os.path.dirname(model_file)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+            print(f"目标目录已创建: {output_dir}")
+
         # 保存 LightGBM 的原生格式，保持最佳兼容性
         model.booster_.save_model(model_file)
         print("模型保存成功，可以直接部署")
