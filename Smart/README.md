@@ -113,15 +113,15 @@
 
 ### 选项 B：使用 Rclone (适用于 Google Drive/OneDrive/其他云存储)
 
-### rclone 是一款命令行云存储同步工具，支持多种云服务。
+rclone 是一款命令行云存储同步工具，支持多种云服务。
 
-1. 准备 Secret：Rclone 配置文件
+1. 准备 Secret：Rclone 配置文件  
 您需要先在本地配置好 rclone (例如配置 Google Drive 或其他远程)，然后将生成的 rclone.conf 文件内容作为 Secret 存储。
 
 Secret 名称：RCLONE_CONFIG  
 Secret 内容：您的 rclone.conf 文件中 除了 [remote_name] 之外的所有配置内容。
 
-2. YAML 示例（在 train_and_deploy.yml 的 train Job 中添加）
+2. YAML 示例（在 train_and_deploy.yml 的 train Job 中添加）  
 请在工作流文件中的 steps: 列表里，紧跟在 actions/checkout 步骤之后，添加如下步骤：
 
 ```yaml
@@ -151,8 +151,7 @@ Secret 内容：您的 rclone.conf 文件中 除了 [remote_name] 之外的所�
     echo "数据下载完成！"
 ```
 
-重要说明：
-
+重要说明：  
 在 rclone 示例中，务必将 [gdrive_remote_name]、gdrive_remote_name:path/to/data 替换为您的实际远程名称和路径。  
 
 ~/.config/rclone/ 目录在 Runner 中默认可能不存在，但在 rclone 运行时会自动创建。
