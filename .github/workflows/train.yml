@@ -34,11 +34,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Python dependencies
+      - name: Install Python dependencies (V3 Library Added)
         run: |
           python -m pip install --upgrade pip
+          
+          # 步骤 1: 安装 requirements.txt 中已有的依赖 (例如 LightGBM, pandas)
           # 路径修正: Smart/scripts/requirements.txt
           pip install -r Smart/scripts/requirements.txt
+          
+          # ⚡ 关键：安装 V3 二进制编码库
+          # 这是解决 Mihomo 'only version=v3 is supported' 错误的根本
+          pip install SmartStore-Lite-Creator
       
       - name: Set up rclone config
         run: |
@@ -64,7 +70,9 @@ jobs:
           fi
 
       - name: Run model training script
-        run: python train_smart.py
+        # ⚠️ 注意：如果您的脚本更名为 train_model_v3.py，这里也要改
+        # 我们假设您将使用 train_model_v3.py 替换掉 train_smart.py
+        run: python train_model_v3.py 
         working-directory: Smart/scripts/
         
       - name: Upload model artifact
@@ -160,7 +168,7 @@ jobs:
           message: |
             <b>🎉 模型发布成功！</b>
             🔗 GitHub Release 已更新至最新时间。
-            ✅ OpenClash 客户端将在下次检查时拉取。
+            ✅ Mihomo 客户端将使用 V3 格式新模型。
             查看 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.LATEST_TAG }}
           format: html
           disable_web_page_preview: true
