@@ -71,7 +71,24 @@
 | **Python 依赖安装** | `pip install -r required_dependencies.txt` | 
 | **Telegram Secrets** | 更新 `secrets.TG_BOT_TOKEN` 和 `secrets.TG_CHAT_ID`（如使用 Telegram 通知）。 | 
 
-### 4. 本地运行说明 (Local Execution)
+
+### 4. 可选：配置 Telegram 部署通知
+
+如果您希望在模型训练和部署成功后收到 Telegram 通知，您需要在 GitHub Secrets 中设置必要的环境变量，这样可以将完整训练日志推送到您的通知机器人。
+
+  **准备 Secrets**
+
+在 GitHub 仓库中进入 **Settings -> Secrets and variables -> Actions**，添加以下 Secrets：
+
+| Secret 名称 | 内容 | 必填 | 说明 |
+| ----------- | ---- | ---- | ---- |
+| `TG_BOT_TOKEN` | 您的 Telegram 机器人的 Token | ✅ | 用于发送消息到您的机器人 |
+| `TG_CHAT_ID` | 您希望接收通知的聊天 ID 或频道 ID | ✅ | 可以是个人聊天或频道 ID |
+
+> ⚠️ 注意：此步骤可选，如果不需要通知，可以跳过。
+
+
+### 5. 本地运行说明 (Local Execution)
 
 1. **环境准备**  
 
@@ -83,7 +100,7 @@
 
 2. **文件准备**  
 
-   - 数据文件：手动将所有历史 CSV 数据文件放置到项目根目录下的 `./data/`  
+   - 数据文件：手动将所有历史 CSV 数据文件放置到项目根目录下的 `/data/`  
    - Go 源码文件：确保 `Smart/go_transform/transform.go` 已存在
 
 3. **执行训练**  
@@ -93,13 +110,13 @@
    python Smart/scripts/train_smart.py
    ```
 
-   执行成功后，模型文件 `Model.bin` 将生成在 `./models/` 目录下
+   执行成功后，模型文件 `Model.bin` 将生成在 `/models/` 目录下
 
 ---
 
 ## 🚀 关键步骤详解：数据下载配置示例（GCS / Rclone）  
 
-由于数据需要从外部云存储下载，您需要在 `train.yml` 的 `train` Job 中添加相应步骤。
+由于自动化运行的数据需要从外部云存储下载，您需要在 `train.yml` 的 `train` Job 中添加相应步骤。
 
 ---
 
