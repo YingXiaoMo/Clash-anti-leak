@@ -38,7 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r Smart/scripts/requirements.txt
-      
+
       - name: Set up rclone config
         run: |
           echo "$RCLONE_CONFIG_B64" | base64 -d > rclone.conf
@@ -62,17 +62,28 @@ jobs:
             exit 1
           fi
 
-      - name: Run model training script
-        run: python train_smart.py 
-        working-directory: Smart/scripts/
-        
+      - name: Run training script and capture log
+        run: |
+          # The Python script is called from the root directory, using the full path.
+          # All output is redirected to training_log.txt.
+          # The '|| true' ensures the step doesn't fail immediately, allowing log upload.
+          python Smart/scripts/train_smart.py > training_log.txt 2>&1 || true
+
       - name: Upload model artifact
         uses: actions/upload-artifact@v4
         with:
           name: model-artifact
+          # Model.bin is created at the root of the repo (due to ../../models path)
           path: models/Model.bin
+
+      - name: Upload Log Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-artifact
+          path: training_log.txt
           
       - name: Clean up temporary files
+        if: always()
         run: |
           rm -rf ./data
           rm rclone.conf
@@ -86,8 +97,38 @@ jobs:
     if: always() 
     env:
       LATEST_TAG: smart-model
-    
+      
     steps:
+      - name: Download Training Log
+        uses: actions/download-artifact@v4
+        with:
+          name: log-artifact
+          path: ./log_output/
+
+      - name: Read Training Log Content
+        id: read_log
+        run: |
+          LOG_FILE="./log_output/training_log.txt"
+          LOG_CONTENT=""
+          LOG_SIZE=0
+
+          if [ -f "$LOG_FILE" ]; then
+            LOG_CONTENT=$(cat "$LOG_FILE")
+            LOG_SIZE=$(du -k "$LOG_FILE" | awk '{print $1}')
+          else
+            LOG_CONTENT="Log file (training_log.txt) not found. Training failed early or log artifact was not created."
+          fi
+
+          # Ensure content is safe for multi-line export (replace all \n with \\n)
+          # We use printf to handle multi-line string setting for GITHUB_OUTPUT
+          {
+            echo "log_message<<EOF"
+            echo "📦 Log File Size: ${LOG_SIZE} KB"
+            echo ""
+            echo "<pre>$LOG_CONTENT</pre>"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+      
       - name: Notify Telegram on Start
         uses: appleboy/telegram-action@master
         with:
@@ -106,7 +147,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Download Model Artifact
         if: success()
         uses: actions/download-artifact@v4
@@ -131,7 +172,7 @@ jobs:
       - name: Overwrite Latest Tag
         if: success()
         run: |
-          git push --delete origin "$LATEST_TAG" 2>/dev/null || true 
+          git push --delete origin "$LATEST_TAG" 2>/dev/null || true  
           git tag -f "$LATEST_TAG"
           git push origin "$LATEST_TAG"
 
@@ -161,6 +202,8 @@ jobs:
             🔗 GitHub Release 已更新至最新时间。
             ✅ Mihomo 客户端将使用 V3 格式新模型。
             查看 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.LATEST_TAG }}
+            
+            ${{ steps.read_log.outputs.log_message }}
           format: html
           disable_web_page_preview: true
 
@@ -175,5 +218,7 @@ jobs:
             <b>🚨 模型部署失败！</b>
             ❌ 任务运行过程中发生错误。
             请检查日志: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            ${{ steps.read_log.outputs.log_message }}
           format: html
-          disable_web_page_preview: true
+          disable_web_page_preview: true      
