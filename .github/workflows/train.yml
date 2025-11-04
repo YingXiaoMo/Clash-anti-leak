@@ -42,9 +42,9 @@ jobs:
           # 路径修正: Smart/scripts/requirements.txt
           pip install -r Smart/scripts/requirements.txt
           
-          # ⚡ 关键：安装 V3 二进制编码库
+          # ⚡ 关键：安装 V3 二进制编码库，修正包名为 'smartstore-creator'
           # 这是解决 Mihomo 'only version=v3 is supported' 错误的根本
-          pip install SmartStore-Lite-Creator
+          pip install smartstore-creator
       
       - name: Set up rclone config
         run: |
@@ -70,9 +70,8 @@ jobs:
           fi
 
       - name: Run model training script
-        # ⚠️ 注意：如果您的脚本更名为 train_model_v3.py，这里也要改
-        # 我们假设您将使用 train_model_v3.py 替换掉 train_smart.py
-        run: python train_model_v3.py 
+        # 脚本名称已根据您的反馈修正为 train_smart.py
+        run: python train_smart.py 
         working-directory: Smart/scripts/
         
       - name: Upload model artifact
