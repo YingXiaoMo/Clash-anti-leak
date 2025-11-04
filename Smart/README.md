@@ -33,10 +33,9 @@
 | `data/` | **必需。** 作为 CSV 数据下载的**临时目标目录**。 | **必填** | 
 | `models/` | **必需。** 存放最终生成的模型文件 `Model.bin`。 | **必填** | 
 | `Smart/go_transform/transform.go` | **必需。** Go 语言特征定义文件。`train_smart.py` 依赖此文件来获取特征顺序。 | **必填** | 
-| `Smart/scripts/train_smart.py` | 训练主脚本。负责数据处理、训练和 V3 编码。 | **必填** | 
-| `Smart/scripts/go_parser.py` | Go 特征解析工具脚本。 | **必填** | 
+| `Smart/scripts/train_smart.py` | 训练主脚本。负责解析特征、数据处理、训练和编码。 | **必填** | 
 | `required_dependencies.txt` | **必需。** 严格锁定的 Python 依赖列表文件。 | **必填** | 
-| `.github/workflows/train_and_deploy.yml` | GitHub Actions 自动化工作流定义文件。 | **必填** | 
+| `.github/workflows/train.yml` | GitHub Actions 自动化工作流定义文件。 | **必填** | 
 
 ## 🛠️ 新用户使用指南：需要修改的关键位置
 
@@ -60,7 +59,7 @@
 | `LGBM_PARAMS` | 如果模型性能不理想，可以调整 LightGBM 的**超参数**，例如 `learning_rate` (学习率)。 | 
 | `STD_SCALER_FEATURES` / `ROBUST_SCALER_FEATURES` | **根据您 Go 源码中定义的特征类型**，调整哪些特征应该使用 `StandardScaler` 或 `RobustScaler` 进行标准化。 | 
 
-### 3. 自动化工作流 (`.github/workflows/train_and_deploy.yml`) 修改
+### 3. 自动化工作流 (`.github/workflows/train.yml`) 修改
 
 此 YAML 文件是自动化流程的核心。
 
@@ -75,7 +74,7 @@
 ---
 
 🚀 关键步骤详解：数据下载配置示例（GCS / Rclone）  
-由于数据需要从外部云存储下载，您需要在 `train_and_deploy.yml` 的 `train` Job 中添加相应的下载步骤。
+由于数据需要从外部云存储下载，您需要在 `train.yml` 的 `train` Job 中添加相应的下载步骤。
 
 ---
 
@@ -123,7 +122,7 @@
 - **Secret 名称：** `RCLONE_CONFIG`  
 - **Secret 内容：** 您的 `rclone.conf` 文件中 **除了 `[remote_name]` 之外的所有配置内容**。
 
-2. YAML 示例（在 `train_and_deploy.yml` 的 `train` Job 中添加）  
+2. YAML 示例（在 `train.yml` 的 `train` Job 中添加）  
 请在 `steps:` 列表里，紧跟在 `actions/checkout` 步骤之后，添加如下步骤：
 
 ```yaml
