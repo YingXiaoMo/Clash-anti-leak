@@ -18,7 +18,7 @@
 
 ## ⚠️ 关键操作警告
 
-### 1. 数据来源与 Runner 清理机制
+### 数据来源与 Runner 清理机制
 
 * **数据来源：** 本工作流**不存储数据**，假定历史数据是从**外部云存储**（例如 Google Cloud Storage 或 Google Drive）下载到 Runner 上的 `data/` 目录中。
 
