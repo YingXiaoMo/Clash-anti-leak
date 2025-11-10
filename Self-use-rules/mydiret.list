@@ -3,7 +3,13 @@ DOMAIN-KEYWORD,epic
 DOMAIN-KEYWORD,flyme
 DOMAIN-KEYWORD,nmliao
 DOMAIN-KEYWORD,outlook
+
 DOMAIN,pixels.spotify.com
+
+DOMAIN-SUFFIX,ghcr.io
+DOMAIN-SUFFIX,docker.com
+DOMAIN-SUFFIX,docker.io
+
 DOMAIN-SUFFIX,humblebundle.com
 DOMAIN-SUFFIX,epicgames.com
 DOMAIN-SUFFIX,spaceship-cdn.com
