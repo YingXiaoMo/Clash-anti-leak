@@ -10,6 +10,8 @@ DOMAIN-SUFFIX,ghcr.io
 DOMAIN-SUFFIX,docker.com
 DOMAIN-SUFFIX,docker.io
 
+DOMAIN-SUFFIX,bujidao.org
+
 DOMAIN-SUFFIX,humblebundle.com
 DOMAIN-SUFFIX,epicgames.com
 DOMAIN-SUFFIX,spaceship-cdn.com
